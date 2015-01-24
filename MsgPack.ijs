@@ -76,6 +76,24 @@ end.
 result
 )
 
+NB. ==============================
+NB. PACK AN OBJECT
+NB. ==============================
+packObj =: verb define
+result =: ''
+boxy =: < datatype y
+len =: # y
+smoutput 'y ',":y
+smoutput boxy
+smoutput 'len ',":len
+if. len > 1 do. result =: packArray y
+elseif. boxy = < 'integer' do. result =: packInteger y
+elseif. boxy = < 'literal' do. result =: packString y
+elseif. boxy = < 'floating' do. result =: packFloat y
+end.
+smoutput 'result ',":result
+result
+)
 
 NB. ==============================
 NB. PACK INTEGERS
@@ -137,7 +155,7 @@ result
 NB. ====================================
 NB. PACK STRINGS
 NB. ====================================
-cs =: st =: , @: hfd @: (a.&i.)
+cs =: , @: hfd @: (a.&i.)
 
 packString =: verb define
 result =: ''
@@ -162,15 +180,17 @@ end.
 result
 )
 
+
 NB. ====================================
 NB. PACK ARRAYS
 NB. ====================================
 packArray =: verb define
 result =: ''
-hexArr =: packFloat"0 y
+hexArr =: packObj"0 y
+smoutput hexArr
 len =: # hexArr
 if.len < 16 do.
-	pre =: hfd2 149 OR len NB. 1001XXXX
+	pre =: hfd2 144 OR len NB. 1001XXXX
 	result =: pre, (,hexArr)
 elseif. len < 2^16 do.
 	pre =.array16
