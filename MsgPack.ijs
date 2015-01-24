@@ -157,7 +157,6 @@ packString =: verb define
 result =: ''
 hexStr =: cs y
 len =. 2%~ # hexStr
-smoutput len
 if. len < 32 do. # NB.  Up to 32 bytes
 	pre =. hfd2 160 OR len
 	result =: pre, hexStr
@@ -224,6 +223,12 @@ NB. todo - finish for all integer lengths int/uint
 unpackInteger =: verb define
 result =: ''
 if. (<1{.y) = <'0' do. result =: dfh y
-elseif. (<2{.y) = <'cc' do. result =: dfh _2{.y
+elseif. (<2{.y) = <'cc' do. result =: dfh strip2 y
+elseif. (<2{.y) = <'cd' do. result =: dfh strip2 y
+elseif. (<2{.y) = <'ce' do. result =: dfh strip2 y
+elseif. (<2{.y) = <'cf' do. result =: dfh strip2 y
 end.
 )
+
+NB. Strip the front 2 chars fromt he hex stirng
+strip2 =: _1&*@:(_2&+)@:# {. ]
