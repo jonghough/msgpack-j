@@ -192,3 +192,38 @@ elseif. len < 2^16 do.
 	result =: pre, (2 hfd_stretch len), (,hexArr)
 end.
 )
+
+
+NB. ====================================
+NB. PACK NIL
+NB. probably pointless
+NB. ====================================
+packNil =: nil
+
+
+
+
+
+
+
+
+NB. ====================================
+NB. UNPACKING
+NB. Unpack MsgPack datatypes to J datatypes
+NB. ====================================
+
+NB. ====================================
+NB. UNPACK BOOLS
+NB. ====================================
+unpackTrue =: 1
+unpackFalse =: 0
+
+unpackNil =: 0 NB. no null in J. TODO change this to more suitable type.
+
+NB. todo - finish for all integer lengths int/uint
+unpackInteger =: verb define
+result =: ''
+if. (<1{.y) = <'0' do. result =: dfh y
+elseif. (<2{.y) = <'cc' do. result =: dfh _2{.y
+end.
+)
