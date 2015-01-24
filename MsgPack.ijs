@@ -83,15 +83,11 @@ packObj =: verb define
 result =: ''
 boxy =: < datatype y
 len =: # y
-smoutput 'y ',":y
-smoutput boxy
-smoutput 'len ',":len
 if. len > 1 do. result =: packArray y
 elseif. boxy = < 'integer' do. result =: packInteger y
 elseif. boxy = < 'literal' do. result =: packString y
 elseif. boxy = < 'floating' do. result =: packFloat y
 end.
-smoutput 'result ',":result
 result
 )
 
@@ -187,7 +183,6 @@ NB. ====================================
 packArray =: verb define
 result =: ''
 hexArr =: packObj"0 y
-smoutput hexArr
 len =: # hexArr
 if.len < 16 do.
 	pre =: hfd2 144 OR len NB. 1001XXXX
