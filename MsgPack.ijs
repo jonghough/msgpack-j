@@ -219,6 +219,10 @@ unpackFalse =: 0
 
 unpackNil =: 0 NB. no null in J. TODO change this to more suitable type.
 
+NB. ====================================
+NB. UNPACK INTEGERS
+NB. ====================================
+
 NB. todo - finish for all integer lengths int/uint
 unpackInteger =: verb define
 result =: ''
@@ -232,3 +236,18 @@ end.
 
 NB. Strip the front 2 chars fromt he hex stirng
 strip2 =: _1&*@:(_2&+)@:# {. ]
+NB. Reshapes the hexstirng into a 4x2 array of hex stirngs, 
+NB. representing bytes.
+byteShape =: 2&(,~)@:(2&(%~))@:# $ ]
+
+NB. Gets a J float from  the hex string
+floatFromHex =: _2&(3!:5)@:|.@:(a.&({~))@:dfh@:byteShape
+
+NB. ====================================
+NB. UNPACK FLOATS
+NB. ====================================
+unpackInteger =: verb define
+result =: ''
+if. (<2{.y) = < float64 do. result =: dfh y
+end.
+)
