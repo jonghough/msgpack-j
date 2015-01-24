@@ -246,8 +246,9 @@ floatFromHex =: _2&(3!:5)@:|.@:(a.&({~))@:dfh@:byteShape
 NB. ====================================
 NB. UNPACK FLOATS
 NB. ====================================
-unpackInteger =: verb define
+unpackFloat =: verb define
 result =: ''
-if. (<2{.y) = < float64 do. result =: dfh y
+if. (<2{.y) = < float64 do. result =: floatFromHex strip2 y
+elseif.1 do. result =: floatFromHex strip2 y
 end.
 )
