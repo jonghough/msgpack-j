@@ -55,7 +55,9 @@ packObj =: verb define
 result =: ''
 boxy =: < datatype y
 len =: # y
-if. len > 1 do. result =: packArray y
+shape =: $ y
+if. (# shape) > 1 do. result =: ,/ (packObj"1 ) y
+elseif. len > 1 do. result =: packArray y
 elseif. boxy = < 'integer' do. result =: packInteger y
 elseif. boxy = < 'literal' do. result =: packString y
 elseif. boxy = < 'floating' do. result =: packFloat y
