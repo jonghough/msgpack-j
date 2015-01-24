@@ -6,38 +6,10 @@ NB. SPECIFICATION
 NB. https://github.com/msgpack/msgpack/blob/master/spec.md
 
 NB. BYTE PREFIXES - constants
-nil =: 'c0'
-reserved =: 'c1'
-false =: 'c2'
-true =: 'c3'
-bin8 =: 'c4'
-bin16 =: 'c5'
-bin32 =: 'c6'
-ext8 =: 'c7'
-ext16 =: 'c8'
-ext32 =: 'c9'
-float32 =: 'ca'
-float64 =: 'cb'
-uint8 =: 'cc'
-uint16 =: 'cd'
-uint32 =: 'ce'
-uint64 =: 'cf'
-int8 =: 'd0'
-int16 =: 'd1'
-int32 =: 'd2'
-int64 =: 'd3'
-fixext1 =: 'd4'
-fixext2 =: 'd5'
-fixext4 =: 'd6'
-fixext8 =: 'd7'
-fixext16 =: 'd8'
-str8 =: 'd9'
-str16 =: 'da'
-str32 =: 'db'
-array16 =: 'dc'
-array32 =: 'dd'
-map16 =: 'de'
-map32 =: 'df'
+(nil=:'c0'),(reserved=:'c1'),(false=:'c2'),(true=:'c3'),(bin8=:'c4'),(bin16=:'c5'),(bin32=:'c6'),(ext8=:'c7'),(ext16=:'c8')
+(ext32=:'c9'),(float32=:'ca'),(float64=:'cb'),(uint8=:'cc'),(uint16 =:'cd'),(uint32 =:'ce'),(uint64 =:'cf'),(int8 =:'d0'),(int16=:'d1')
+(int32=:'d2'),(int64=:'d3'),(fixext1=:'d4'),(fixext2=:'d5'),(fixext4=:'d6'),(fixext8=:'d7'),(fixext16=:'d8'),(str8=:'d9'),(str16=:'da')
+(str32=:'db'),(array16=:'dc'),(array32=:'dd'),(map16=:'de'),(map32=:'df')
 
 XOR =: 22 b.
 OR =: 23 b.
