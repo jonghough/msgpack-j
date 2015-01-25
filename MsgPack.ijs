@@ -20,7 +20,7 @@ NOT =: 20 b.
 NB. can be represented as single byte
 isSmallUInt =: (=(127&AND))*.(0&<)
 isSmallNegInt =: (=(32&AND))*.(0&>)
-
+isBoxed =: 0&<@:L.
 digitsToString =: ,"2@:(":"0)
 
 NB. Same as hfd, but prepends a leading
@@ -56,7 +56,8 @@ result =: ''
 boxy =: < datatype y
 len =: # y
 shape =: $ y
-if. (# shape) > 1 do. result =: ,/ (packObj"1 ) y NB. TODO need to add prefix to show the length of the overall array.
+if. isBoxed y do. result =: packBox y
+elseif. (# shape) > 1 do. result =: ,/ (packObj"1 ) y NB. TODO need to add prefix to show the length of the overall array.
 elseif. len > 1 do. result =: packArray y
 elseif. boxy = < 'integer' do. result =: packInteger y
 elseif. boxy = < 'literal' do. result =: packString y
@@ -168,6 +169,11 @@ elseif. len < 2^16 do.
 end.
 )
 
+packBox =: verb define
+result =: ''
+result =: packObj > y
+result
+)
 
 NB. ====================================
 NB. PACK NIL
