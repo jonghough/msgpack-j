@@ -211,8 +211,8 @@ elseif. (<2{.y) = <'cf' do. result =: dfh strip2 y
 end.
 )
 
-NB. Strip the front 2 chars fromt he hex stirng
-strip2 =: _1&*@:(_2&+)@:# {. ]
+NB. Strip the front 2 chars from the front of the array
+strip2 =: 2& }.
 NB. Reshapes the hexstirng into a 4x2 array of hex stirngs, 
 NB. representing bytes.
 byteShape =: 2&(,~)@:(2&(%~))@:# $ ]
