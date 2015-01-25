@@ -26,7 +26,7 @@ digitsToString =: ,"2@:(":"0)
 NB. Same as hfd, but prepends a leading
 NB. '0' onto hex strings with odd number of 
 NB. characters.
-hfd2 =: verb define 
+hfd2 =: monad define 
 h=: hfd y
 len =: # h
 result =: h
@@ -51,7 +51,7 @@ result
 NB. ==============================
 NB. PACK AN OBJECT
 NB. ==============================
-packObj =: verb define
+packObj =: monad define
 result =: ''
 boxy =: < datatype y
 len =: # y
@@ -70,7 +70,7 @@ NB. ==============================
 NB. PACK INTEGERS
 NB. ==============================
 
-packInteger =: verb define
+packInteger =: monad define
 result =: ''
 if. y < 0 do.
 	if. (y-1) > _32 do. NB. 5 bits 111YYYYY form
@@ -116,7 +116,7 @@ NB. PACK FLOATS
 NB. ====================================
 convertFloat =: |."1@:,@:(|."1)@:hfd@:(a.&i.)@:(2&(3!:5))
 
-packFloat =: verb define
+packFloat =: monad define
 result =: ''
 if. (=<.) y do. result =: packInteger y NB. if can be cast to integer then pack as an integer.
 elseif. 1 do. result =: float64, convertFloat y
@@ -130,7 +130,7 @@ NB. PACK STRINGS
 NB. ====================================
 cs =: , @: hfd @: (a.&i.)
 
-packString =: verb define
+packString =: monad define
 result =: ''
 hexStr =: cs y
 len =. 2%~ # hexStr
@@ -156,7 +156,7 @@ result
 NB. ====================================
 NB. PACK ARRAYS
 NB. ====================================
-packArray =: verb define
+packArray =: monad define
 result =: ''
 hexArr =: packObj"0 y NB. pack the items
 len =: # hexArr
@@ -200,7 +200,7 @@ NB. UNPACK INTEGERS
 NB. ====================================
 
 NB. todo - finish for all integer lengths int/uint
-unpackInteger =: verb define
+unpackInteger =: monad define
 result =: ''
 if. (<1{.y) = <'0' do. result =: dfh y
 elseif. (<2{.y) = <'cc' do. result =: dfh strip2 y
@@ -222,7 +222,7 @@ floatFromHex =: _2&(3!:5)@:|.@:(a.&({~))@:dfh@:byteShape
 NB. ====================================
 NB. UNPACK FLOATS
 NB. ====================================
-unpackFloat =: verb define
+unpackFloat =: monad define
 result =: ''
 if. (<2{.y) = < float64 do. result =: floatFromHex strip2 y
 elseif.1 do. result =: floatFromHex strip2 y
