@@ -56,7 +56,7 @@ result =: ''
 boxy =: < datatype y
 len =: # y
 shape =: $ y
-if. (# shape) > 1 do. result =: ,/ (packObj"1 ) y
+if. (# shape) > 1 do. result =: ,/ (packObj"1 ) y NB. TODO need to add prefix to show the length of the overall array.
 elseif. len > 1 do. result =: packArray y
 elseif. boxy = < 'integer' do. result =: packInteger y
 elseif. boxy = < 'literal' do. result =: packString y
@@ -117,7 +117,9 @@ convertFloat =: |."1@:,@:(|."1)@:hfd@:(a.&i.)@:(2&(3!:5))
 
 packFloat =: verb define
 result =: ''
-result =: float64, convertFloat y
+if. (=<.) y do. result =: packInteger y NB. if can be cast to integer then pack as an integer.
+elseif. 1 do. result =: float64, convertFloat y
+end.
 result
 )
 
@@ -155,11 +157,11 @@ NB. PACK ARRAYS
 NB. ====================================
 packArray =: verb define
 result =: ''
-hexArr =: packObj"0 y
+hexArr =: packObj"0 y NB. pack the items
 len =: # hexArr
 if.len < 16 do.
 	pre =: hfd2 144 OR len NB. 1001XXXX
-	result =: pre, (,hexArr)
+	result =: ' '-.~ , pre, (hexArr)
 elseif. len < 2^16 do.
 	pre =.array16
 	result =: pre, (2 hfd_stretch len), (,hexArr)
@@ -172,12 +174,6 @@ NB. PACK NIL
 NB. probably pointless
 NB. ====================================
 packNil =: nil
-
-
-
-
-
-
 
 
 NB. ====================================
