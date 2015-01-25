@@ -202,7 +202,8 @@ NB. ====================================
 NB. todo - finish for all integer lengths int/uint
 unpackInteger =: monad define
 result =: ''
-if. (<1{.y) = <'0' do. result =: dfh y
+len =: # y
+if. len = 2 do. result =: dfh y
 elseif. (<2{.y) = <'cc' do. result =: dfh strip2 y
 elseif. (<2{.y) = <'cd' do. result =: dfh strip2 y
 elseif. (<2{.y) = <'ce' do. result =: dfh strip2 y
