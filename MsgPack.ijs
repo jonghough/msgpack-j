@@ -53,14 +53,16 @@ NB. PACK AN OBJECT
 NB. ==============================
 packObj =: monad define
 result =: ''
-boxy =: < datatype y
-len =: # y
-shape =: $ y
+boxy =. < datatype y
+len =. # y
+shape =. $ y
 if. isBoxed y do. result =: packBox y
-elseif. (# shape) > 1 do. result =: ,/ (packObj"1 ) y NB. TODO need to add prefix to show the length of the overall array.
+elseif. boxy = < 'literal' do. result =: packString y
+elseif. (# shape) > 1 do.
+prefix =. hfd2 144 OR {. shape
+result =: ' '-.~ prefix, ,/ (packObj"1 ) y NB. TODO need to add prefix to show the length of the overall array.
 elseif. len > 1 do. result =: packArray y
 elseif. boxy = < 'integer' do. result =: packInteger y
-elseif. boxy = < 'literal' do. result =: packString y
 elseif. boxy = < 'floating' do. result =: packFloat y
 end.
 result
