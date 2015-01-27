@@ -4,7 +4,7 @@ require '~user/projects/MsgPack/msgpack-j/MsgPack.ijs'
 NB. compare adverb.
 NB. 0{n is the argument, u is the verb to be tested,
 NB. 1{n is the expected result (boxed)
-compare =: 2 : '(<u>0{n) = (1{n)'
+compare =: 2 : '((u&.>)0{n) = (1{n)'
 
 NB. INTEGERS TESTS
 packObj compare ( 2; '02')
