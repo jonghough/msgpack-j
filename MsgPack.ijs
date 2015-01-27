@@ -196,6 +196,22 @@ NB. UNPACKING
 NB. Unpack MsgPack datatypes to J datatypes
 NB. ====================================
 
+NB. Unpack... not finished.
+unpackObj =: monad define
+b1 =: <take2 y
+result =: ''
+if. b1 = (<false) do.
+result =: 0 NB. A false representation in J
+elseif. b1 = (<true) do.
+result =: 1
+elseif. 1 do.
+1
+if. 2 > # strip2 y do.
+result =: result ; (unpackObj strip2 y) NB. TODO, should be boxed?
+end.
+result
+)
+
 NB. ====================================
 NB. UNPACK BOOLS
 NB. ====================================
@@ -220,6 +236,8 @@ elseif. (<2{.y) = <'cf' do. result =: dfh strip2 y
 end.
 )
 
+NB. Take the first two items
+take2 =: 2&{.
 NB. Strip the front 2 chars from the front of the array
 strip2 =: 2& }.
 NB. Reshapes the hexstirng into a 4x2 array of hex stirngs, 
