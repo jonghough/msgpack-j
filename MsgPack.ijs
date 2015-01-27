@@ -31,18 +31,23 @@ h=: hfd y
 len =: # h
 result =: h
 if. (2 | len) = 1 do.
-result =: '0',result
+if. y < 0 do. result =: 'f',result
+else. result =: '0',result end.
 end.
 result
 )
 
+NB. Calculates hex from decimal 
+NB. and stretches the number of bytes to the
+NB. required amount, either padding 0's or F's
 hfd_stretch =: dyad define
 targetLen =. x
 h =: hfd2 y
 result =: h
 diff =: targetLen - (2 %~ # h)
 if. diff > 0 do.
-append =: (2*diff) $ '0'
+if. y < 0 do. append =: (2*diff) $ 'f'
+else. append =: (2*diff) $ '0' end.
 result =: append, result
 end.
 result
@@ -72,6 +77,8 @@ NB. ==============================
 NB. PACK INTEGERS
 NB. ==============================
 
+convertInt =: |."1@:,@:(|."1)@:hfd@:(a.&i.)@:(2&(3!:4))
+
 packInteger =: monad define
 result =: ''
 if. y < 0 do.
@@ -82,27 +89,27 @@ if. y < 0 do.
 		p =: 0{ hfd p
 		result =: p NB. hfd2 p OR y
 	elseif. (y-1) > _128 do. 
-		result =: int8, hfd2 y
-	elseif. (y-1) > (2^15) do.
-		result  =: int16, hfd2 y
-	elseif. (y-1) > (2^31) do.
-		result =: int32, hfd2 y
-	elseif. (y-1) > (2^63) do.
-		result =: int64, hfd2 y
+		result =: int8, (1 hfd_stretch y)
+	elseif. (y-1) > (_1*2^16) do.
+		result  =: int16, (2 hfd_stretch y)
+	elseif. (y-1) > (_1*2^32) do.
+		result =: int32, (4 hfd_stretch y)
+	elseif. (y-1) > (_1*2^64) do.
+		result =: int64, (8 hfd_stretch y)
 	elseif. 1 do.
 	NB. NOTHING
 		1
 	end.
 elseif. 1 do.
-	if. (y-1) < 127 do.
+	if. (y+1) < 127 do.
 		result =: hfd2 y
-	elseif. (y-1) < 256 do.
+	elseif. (y+1) < 256 do.
 		result =: uint8, (1 hfd_stretch y)
-	elseif. (y-1) < (2^16) do.
+	elseif. (y+1) < (2^16) do.
 		result =: uint16, (2 hfd_stretch y)
-	elseif. (y-1) < (2^32) do.
+	elseif. (y+1) < (2^32) do.
 		result =: uint32, (4 hfd_stretch y)
-	elseif. (y-1) < (2^64) do.
+	elseif. (y+1) < (2^64) do.
 		result =: uint64, (8 hfd_stretch y)
 	elseif. 1 do.
 		1
