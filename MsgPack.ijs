@@ -206,6 +206,7 @@ elseif. b1 = (<true) do.
 result =: 1
 elseif. 1 do.
 1
+end.
 if. 2 > # strip2 y do.
 result =: result ; (unpackObj strip2 y) NB. TODO, should be boxed?
 end.
