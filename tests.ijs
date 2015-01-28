@@ -32,6 +32,9 @@ NB. SINGLE DIMENSION INTEGER ARRAYS
 packObj compare ((2 3 4 5); '9402030405')
 packObj compare ((100 8589934592 6593); '9364cf0000000200000000cd19c1')
 
+NB. ARRAY TEST
+packObj compare ((3;(<'hi';6.3));'920392a26869cb4019333333333333') NB. equivalent to [3,["hi",6.3]]
+
 NB. STRINGS
 packObj compare ('The quick brown fox...';'b654686520717569636b2062726f776e20666f782e2e2e')
 packObj compare ('notation as a tool of thought!'; 'be6e6f746174696f6e206173206120746f6f6c206f662074686f7567687421')
