@@ -1,7 +1,6 @@
 NB. J implementation of MsgPack
 NB. @author Jon Hough
 
-
 NB. SPECIFICATION
 NB. https://github.com/msgpack/msgpack/blob/master/spec.md
 
@@ -10,12 +9,8 @@ NB. BYTE PREFIXES - constants
 (ext32=:'c9'),(float32=:'ca'),(float64=:'cb'),(uint8=:'cc'),(uint16 =:'cd'),(uint32 =:'ce'),(uint64 =:'cf'),(int8 =:'d0'),(int16=:'d1')
 (int32=:'d2'),(int64=:'d3'),(fixext1=:'d4'),(fixext2=:'d5'),(fixext4=:'d6'),(fixext8=:'d7'),(fixext16=:'d8'),(str8=:'d9'),(str16=:'da')
 (str32=:'db'),(array16=:'dc'),(array32=:'dd'),(map16=:'de'),(map32=:'df')
-
-XOR =: 22 b.
-OR =: 23 b.
-AND =: 17 b.
-NOT =: 20 b.
-
+NB. operators
+(XOR =: 22 b.),(OR =: 23 b.),(AND =: 17 b.),(NOT =: 20 b.)
 
 NB. can be represented as single byte
 isSmallUInt =: (=(127&AND))*.(0&<)
@@ -26,7 +21,7 @@ digitsToString =: ,"2@:(":"0)
 NB. Same as hfd, but prepends a leading
 NB. '0' onto hex strings with odd number of 
 NB. characters.
-hfd2 =: monad define 
+hfd2 =: monad define
 h=: hfd y
 len =: # h
 result =: h
@@ -65,9 +60,9 @@ if. isBoxed y do. result =: packBox y
 elseif. boxy = < 'literal' do. result =: packString y
 elseif. (# shape) > 1 do.
 prefix =. hfd2 144 OR {. shape
-result =: ' '-.~ prefix, ,/ (packObj"1 ) y NB. TODO need to add prefix to show the length of the overall array.
+result =: ' '-.~ prefix, (packObj"1 ) y NB. TODO need to add prefix to show the length of the overall array.
 elseif. len > 1 do. result =: packArray y
-elseif. boxy = < 'integer' do. result =: packInteger y
+elseif. boxy e. ( 'integer' ; 'boolean') do. result =: packInteger y
 elseif. boxy = < 'floating' do. result =: packFloat y
 end.
 result
@@ -178,9 +173,22 @@ elseif. len < 2^16 do.
 end.
 )
 
+NB. ====================================
+NB. PACK BOX
+NB. ====================================
 packBox =: verb define
 result =: ''
-result =: packObj > y
+len =: # y
+if. len = 1 do. result =: packObj > y
+else.
+if.len < 16 do.
+pre =: hfd2 144 OR len
+result =: ' '-.~ , pre, (, packBox"0 y)
+elseif. len < 2^16 do.
+pre =.array16
+result =: ' '-.~ pre, (2 hfd_stretch len), (, packBox"0 y)
+end.
+end.
 result
 )
 
@@ -190,6 +198,9 @@ NB. probably pointless
 NB. ====================================
 packNil =: nil
 
+
+NB. Pack -> Int array,  char.
+pack =: (a.&({~))@:dfh@:byteShape@:packObj
 
 NB. ====================================
 NB. UNPACKING
@@ -240,7 +251,7 @@ end.
 NB. Take the first two items
 take2 =: 2&{.
 NB. Strip the front 2 chars from the front of the array
-strip2 =: 2& }.
+strip2 =: 2&}.
 NB. Reshapes the hexstirng into a 4x2 array of hex stirngs, 
 NB. representing bytes.
 byteShape =: 2&(,~)@:(2&(%~))@:# $ ]
