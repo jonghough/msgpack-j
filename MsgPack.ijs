@@ -60,8 +60,11 @@ if. isBoxed y do. result =: packBox y
 elseif. boxy = < 'literal' do. result =: packString y
 elseif. (# shape) > 1 do.
 prefix =. hfd2 144 OR {. shape
-result =: ' '-.~ prefix, (packObj"1 ) y NB. TODO need to add prefix to show the length of the overall array.
-elseif. len > 1 do. result =: packArray y
+
+ord =: 0&>.<:#shape 
+result =: ' '-.~,"_ prefix, (packObj"ord ) y NB. TODO need to add prefix to show the length of the overall array.
+elseif. len > 1 do. result =: ' '-.~,"_ packArray y
+smoutput 'pack array ',":y
 elseif. boxy e. ( 'integer' ; 'boolean') do. result =: packInteger y
 elseif. boxy = < 'floating' do. result =: packFloat y
 end.
@@ -162,7 +165,7 @@ NB. PACK ARRAYS
 NB. ====================================
 packArray =: monad define
 result =: ''
-hexArr =: packObj"0 y NB. pack the items
+hexArr =: ' '-.~ packObj"0 y NB. pack the items
 len =: # hexArr
 if.len < 16 do.
 	pre =: hfd2 144 OR len NB. 1001XXXX
