@@ -35,7 +35,11 @@ packObj compare ((100 8589934592 6593); '9364cf0000000200000000cd19c1')
 NB. ARRAY TEST
 packObj compare ((3;(<'hi';6.3));'920392a26869cb4019333333333333') NB. equivalent to [3,["hi",6.3]]
 
+NB. MULTIDIMENSIONAL ARRAYS
+NB. 2x2x2 array of floats
+packObj compare ((2 2 2 $ 2.1 4.3 6.7 8.888 1.1 0.9 1.001 3.14); '929292cb4000cccccccccccdcb401133333333333392cb401acccccccccccdcb4021c6a7ef9db22d9292cb3ff199999999999acb3feccccccccccccd92cb3ff004189374bc6acb40091eb851eb851f')
 NB. STRINGS
+packObj compare ('!>#$&+*'; 'a7213e2324262b2a')
 packObj compare ('The quick brown fox...';'b654686520717569636b2062726f776e20666f782e2e2e')
 packObj compare ('notation as a tool of thought!'; 'be6e6f746174696f6e206173206120746f6f6c206f662074686f7567687421')
 NB. skip below test. It adds trailing elipsis. Needs fixing

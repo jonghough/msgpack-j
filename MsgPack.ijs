@@ -64,7 +64,6 @@ prefix =. hfd2 144 OR {. shape
 ord =: 0&>.<:#shape 
 result =: ' '-.~,"_ prefix, (packObj"ord ) y NB. TODO need to add prefix to show the length of the overall array.
 elseif. len > 1 do. result =: ' '-.~,"_ packArray y
-smoutput 'pack array ',":y
 elseif. boxy e. ( 'integer' ; 'boolean') do. result =: packInteger y
 elseif. boxy = < 'floating' do. result =: packFloat y
 end.
@@ -81,11 +80,7 @@ packInteger =: monad define
 result =: ''
 if. y < 0 do.
 	if. (y-1) > _32 do. NB. 5 bits 111YYYYY form
-		p =: 224
-		p =: 1 (3!:4) y
-		p =: a.i. p
-		p =: 0{ hfd p
-		result =: p NB. hfd2 p OR y
+		result =: 1 hfd_stretch y
 	elseif. (y-1) > _128 do. 
 		result =: int8, (1 hfd_stretch y)
 	elseif. (y-1) > (_1*2^16) do.
@@ -210,19 +205,28 @@ NB. UNPACKING
 NB. Unpack MsgPack datatypes to J datatypes
 NB. ====================================
 
+isInRange =: ((0&{ @ [) < ]) *. ((1&{ @ [) > ])
+
 NB. Unpack... not finished.
 unpackObj =: monad define
-b1 =: <take2 y
 result =: ''
-if. b1 = (<false) do.
+if. 2 = # y do. result =: unpackInteger y
+else.
+b1 =: <take2 y
+if. b1 = <false do.
 result =: 0 NB. A false representation in J
-elseif. b1 = (<true) do.
+elseif. b1 = <true do.
 result =: 1
+elseif. b1 e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do.
+result =: unpackInteger y
+elseif. (b1 e. str8;str16;str32)+. (159 176 isInRange dfh > b1) do.
+result =: unpackString y
 elseif. 1 do.
 1
 end.
 if. 2 > # strip2 y do.
 result =: result ; (unpackObj strip2 y) NB. TODO, should be boxed?
+end.
 end.
 result
 )
@@ -271,3 +275,12 @@ if. (<2{.y) = < float64 do. result =: floatFromHex strip2 y
 elseif.1 do. result =: floatFromHex strip2 y
 end.
 )
+
+unpackString =: monad define
+result =: a.{~ dfh byteShape strip2 y
+)
+
+unpackBin =: monad define
+
+)
+
