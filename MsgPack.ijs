@@ -277,6 +277,9 @@ elseif.1 do. result =: floatFromHex 8 {. strip2 y
 end.
 )
 
+NB. ====================================
+NB. UNPACK STRINGS
+NB. ====================================
 unpackString =: monad define
 type =: < take2 y
 len =: ''
@@ -301,7 +304,17 @@ end.
 result
 )
 
+0 : 0
+unpack2 =: monad define
+result =: ''
+len =: # y
+if. len = 2 do. result =: dfh y
+elseif. (<2{.y) = <'cc' do. result =: unpackInt 
+elseif. (<2{.y) = <'cd' do. result =: dfh strip2 y
+elseif. (<2{.y) = <'ce' do. result =: dfh strip2 y
+elseif. (<2{.y) = <'cf'
+)
 
-
+NB. stripAndUnpack =: 2 : 'u (4&{.) @: dfh @: strip2 y'
 
 
