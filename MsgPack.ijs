@@ -271,13 +271,24 @@ NB. UNPACK FLOATS
 NB. ====================================
 unpackFloat =: monad define
 result =: ''
-if. (<2{.y) = < float64 do. result =: floatFromHex strip2 y
-elseif.1 do. result =: floatFromHex strip2 y
+if. (<2{.y) = < float64 do. 
+smoutput ": 16 {. strip2 y
+result =: floatFromHex 16 {. strip2 y
+elseif.1 do. result =: floatFromHex 8 {. strip2 y
 end.
 )
 
 unpackString =: monad define
-result =: a.{~ dfh byteShape strip2 y
+type =: < take2 y
+len =: ''
+if. type = <str8 do. len =: 2
+elseif. type = <str16 do. len =: 4
+elseif. type = <str32 do. len =: 8
+elseif. 1 do.
+smoutput ": 2 * dfh 1{ > type
+len =: 2 * dfh 1{ > type
+end.
+result =: a.{~ dfh byteShape len {. strip2 y
 )
 
 unpackBin =: monad define
@@ -286,9 +297,13 @@ unpackBin =: monad define
 
 unpackMap =: monad define
 if. (2<{.y) e. (map16; map32) do.
-len =: dfh take2 strip2 y
-result =: < packObj len {. strip2 y
+len =: dfh 4{. strip2 y
+result =: < unpackObj len {. strip2 y
 end.
 result
 )
+
+
+
+
 
