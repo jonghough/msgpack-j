@@ -272,7 +272,6 @@ NB. ====================================
 unpackFloat =: monad define
 result =: ''
 if. (<2{.y) = < float64 do. 
-smoutput ": 16 {. strip2 y
 result =: floatFromHex 16 {. strip2 y
 elseif.1 do. result =: floatFromHex 8 {. strip2 y
 end.
@@ -285,7 +284,6 @@ if. type = <str8 do. len =: 2
 elseif. type = <str16 do. len =: 4
 elseif. type = <str32 do. len =: 8
 elseif. 1 do.
-smoutput ": 2 * dfh 1{ > type
 len =: 2 * dfh 1{ > type
 end.
 result =: a.{~ dfh byteShape len {. strip2 y
