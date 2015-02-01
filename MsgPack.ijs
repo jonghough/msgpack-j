@@ -284,3 +284,11 @@ unpackBin =: monad define
 
 )
 
+unpackMap =: monad define
+if. (2<{.y) e. (map16; map32) do.
+len =: dfh take2 strip2 y
+result =: < packObj len {. strip2 y
+end.
+result
+)
+
