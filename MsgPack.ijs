@@ -253,6 +253,7 @@ elseif. (<2{.y) = <'cd' do. result =: dfh strip2 y
 elseif. (<2{.y) = <'ce' do. result =: dfh strip2 y
 elseif. (<2{.y) = <'cf' do. result =: dfh strip2 y
 end.
+result
 )
 
 NB. Take the first two items
@@ -315,6 +316,76 @@ elseif. (<2{.y) = <'ce' do. result =: dfh strip2 y
 elseif. (<2{.y) = <'cf'
 )
 
-NB. stripAndUnpack =: 2 : 'u (4&{.) @: dfh @: strip2 y'
+unpackArray =: monad define 
+result =: length strip2 y
+result
+)
 
+NB. Gives the number of chars to take from the
+NB. argument to parse in the next deserialization call.
+length =: monad define
+smoutput 'entry to length y ',":y
+type =. < take2 y
+len =. _1
+func =. ''
+NB. strings
+if. ({. > type) e.'ab' do. len =. 1
+func=.unpackString
+elseif. type = <str8 do. len =. 2
+func=.unpackString
+elseif. type = <str16 do. len =. 4
+func=.unpackString
+elseif. type = <str32 do. len =. 8
+func=.unpackString
+NB. integers
+elseif. (dfh{.>type) < 8 do. len =. 0
+func=.unpackInteger
+elseif. type = <uint8 do. len =. 2
+func=.unpackInteger
+elseif. type = <uint16 do. len =. 4
+func=.unpackInteger
+elseif. type = <uint32 do. len =. 8
+func=.unpackInteger
+elseif. type = <uint64 do. len =. 16
+func=.unpackInteger
+elseif. type = <int8 do. len =. 0
+func=.unpackInteger
+elseif. type = <int16 do. len =. 4
+func=.unpackInteger
+elseif. type = <int32 do. len =. 8
+func=.unpackInteger
+elseif. type = <int64 do. len =. 16
+func=.unpackInteger
+NB. floats
+elseif. type = <float32 do. len =. 8
+func=.unpackFloat
+elseif. type = <float64 do. len =. 16
+func=.unpackFloat
+NB. arrays
+elseif. (dfh{.>type) = 9 do. len =.(#y)-2 NB. 2* dfh( 1{ > type) NB. second hex digit is length
+func =. unpackArray
+elseif. type = <array16 do. len =. 4 + (dfh 4{. strip2 y)
+func =. unpackArray
+elseif. type = <array32 do. len =. 8 + (dfh 8{. strip2 y)
+func =. unpackArray
+end.
+rightside =. a:
+if.len = _1 do.
+elseif. (len+2 ) < # y do.
+rightside =. length (len+2)}.y
+end.
 
+res =: func (len+2){. y
+if.-. rightside -: a:do. res =: res;rightside end.
+res
+)
+
+NB. unused for now
+unpackAll =: dyad define
+type =: x
+arg =: y
+if. type e. (float32;float64) do. unpackFloat y
+
+NB. elseif ... TODO
+end.
+)
