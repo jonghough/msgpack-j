@@ -317,7 +317,7 @@ elseif. (<2{.y) = <'cf'
 )
 
 unpackArray =: monad define 
-result =: length strip2 y
+result =: length y
 result
 )
 
@@ -362,22 +362,31 @@ func=.unpackFloat
 elseif. type = <float64 do. len =. 16
 func=.unpackFloat
 NB. arrays
-elseif. (dfh{.>type) = 9 do. len =.(#y)-2 NB. 2* dfh( 1{ > type) NB. second hex digit is length
-func =. unpackArray
-elseif. type = <array16 do. len =. 4 + (dfh 4{. strip2 y)
-func =. unpackArray
-elseif. type = <array32 do. len =. 8 + (dfh 8{. strip2 y)
-func =. unpackArray
+elseif. (dfh{.>type) = 9 do. len =.0 NB. 2* dfh( 1{ > type) NB. second hex digit is length
+func =. none
+elseif. type = <array16 do. len =.4 NB.len =. 4 + (dfh 4{. strip2 y)
+func =. none
+elseif. type = <array32 do. len =.8 NB.len =. 8 + (dfh 8{. strip2 y)
+func =. none
 end.
+smoutput 'len : ',":len
+
+smoutput 'ylen : ',": # y
+
 rightside =. a:
 if.len = _1 do.
 elseif. (len+2 ) < # y do.
 rightside =. length (len+2)}.y
 end.
-
+smoutput 'arg is ',":((len+2){. y)
 res =: func (len+2){. y
 if.-. rightside -: a:do. res =: res;rightside end.
 res
+)
+
+none=: monad define
+r =: ''
+''
 )
 
 NB. unused for now
