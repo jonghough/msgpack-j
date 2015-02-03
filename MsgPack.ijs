@@ -284,13 +284,13 @@ NB. ====================================
 unpackString =: monad define
 type =: < take2 y
 len =: ''
-if. type = <str8 do. len =: 2
-elseif. type = <str16 do. len =: 4
-elseif. type = <str32 do. len =: 8
+if. type = <str8 do. len =: 4
+elseif. type = <str16 do. len =: 8
+elseif. type = <str32 do. len =: 16
 elseif. 1 do.
-len =: 2 * dfh 1{ > type
+len =: 0
 end.
-result =: a.{~ dfh byteShape len {. strip2 y
+result =: a.{~ dfh byteShape len }. strip2 y
 )
 
 unpackBin =: monad define
@@ -329,13 +329,13 @@ type =. < take2 y
 len =. _1
 func =. ''
 NB. strings
-if. ({. > type) e.'ab' do. len =. 1
+if. ({. > type) e.'ab' do. len =.2* (dfh > type) - 160
 func=.unpackString
-elseif. type = <str8 do. len =. 2
+elseif. type = <str8 do. len =.2* dfh (2 3{.y)
 func=.unpackString
-elseif. type = <str16 do. len =. 4
+elseif. type = <str16 do. len =.2* dfh (2 3 4 5{.y)
 func=.unpackString
-elseif. type = <str32 do. len =. 8
+elseif. type = <str32 do. len =.2* dfh (2 3 4 5 6 7 8 9{.y)
 func=.unpackString
 NB. integers
 elseif. (dfh{.>type) < 8 do. len =. 0
