@@ -306,16 +306,6 @@ end.
 result
 )
 
-0 : 0
-unpack2 =: monad define
-result =: ''
-len =: # y
-if. len = 2 do. result =: dfh y
-elseif. (<2{.y) = <'cc' do. result =: unpackInt 
-elseif. (<2{.y) = <'cd' do. result =: dfh strip2 y
-elseif. (<2{.y) = <'ce' do. result =: dfh strip2 y
-elseif. (<2{.y) = <'cf'
-)
 
 unpackArray =: monad define 
 result =: length y
@@ -325,7 +315,6 @@ result
 NB. Gives the number of chars to take from the
 NB. argument to parse in the next deserialization call.
 length =: monad define
-smoutput 'entry to length y ',":y
 type =. < take2 y
 len =. _1
 func =. ''
@@ -375,7 +364,6 @@ if.len = _1 do.
 elseif. (len+2 ) < # y do.
 rightside =. length (len+2)}.y
 end.
-smoutput 'arg is ',":((len+2){. y)
 res =: func (len+2){. y
 if.-. rightside -: a:do. res =: res;rightside end.
 res
@@ -455,7 +443,6 @@ NB. tacit read
 rd =: >@(1&{@]) (unpack@{.;}.) >@(0&{@])
 
 readLen =: verb define
-smoutput 'entry is ',":y
 data =. >0{y
 len =. >1{y
 reslt=: ''
