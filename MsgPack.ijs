@@ -246,12 +246,13 @@ NB. ====================================
 NB. todo - finish for all integer lengths int/uint
 unpackInteger =: monad define
 result =: ''
-len =: # y
-if. len = 2 do. result =: dfh y
-elseif. (<2{.y) = <'cc' do. result =: dfh strip2 y
-elseif. (<2{.y) = <'cd' do. result =: dfh strip2 y
-elseif. (<2{.y) = <'ce' do. result =: dfh strip2 y
-elseif. (<2{.y) = <'cf' do. result =: dfh strip2 y
+data =. >0{y
+len =. >1{y
+if. len = 2 do. result =: dfh data
+elseif. (<2{.y) = <'cc' do. result =: dfh strip2 data
+elseif. (<2{.y) = <'cd' do. result =: dfh strip2 data
+elseif. (<2{.y) = <'ce' do. result =: dfh strip2 data
+elseif. (<2{.y) = <'cf' do. result =: dfh strip2 data
 end.
 result
 )
@@ -369,10 +370,6 @@ func =. none
 elseif. type = <array32 do. len =.8 NB.len =. 8 + (dfh 8{. strip2 y)
 func =. none
 end.
-smoutput 'len : ',":len
-
-smoutput 'ylen : ',": # y
-
 rightside =. a:
 if.len = _1 do.
 elseif. (len+2 ) < # y do.
@@ -389,12 +386,84 @@ r =: ''
 ''
 )
 
-NB. unused for now
-unpackAll =: dyad define
-type =: x
-arg =: y
-if. type e. (float32;float64) do. unpackFloat y
-
-NB. elseif ... TODO
+unpack =: monad define
+smoutput 'entry to unpack y ',":y
+type =. < take2 y
+len =. _1
+func =. ''
+res =: ''
+if. 0 = # y do.
+NB. strings
+elseif. ({. > type) e.'ab' do. len =.2+2* (dfh > type) - 160
+res =: unpackString y;len
+elseif. type = <str8 do. len =.2+2* dfh (2 3{.y)
+res =: unpackString y;len
+elseif. type = <str16 do. len =.2+2* dfh (2 3 4 5{.y)
+res =: unpackString y;len
+elseif. type = <str32 do. len =.2+2* dfh (2 3 4 5 6 7 8 9{.y)
+res =: unpackString y;len
+NB. integers
+elseif. (dfh{.>type) < 8 do. len =.2+ 0
+res =. unpackInteger y;len
+elseif. type = <uint8 do. len =. 2+2
+res =. unpackInteger y;len
+elseif. type = <uint16 do. len =.2+ 4
+res =. unpackInteger y;len
+elseif. type = <uint32 do. len =.2+ 8
+res =. unpackInteger y;len
+elseif. type = <uint64 do. len =.2+ 16
+res =. unpackInteger y;len
+elseif. type = <int8 do. len =.2+ 0
+res =. unpackInteger y;len
+elseif. type = <int16 do. len =.2+ 4
+res =. unpackInteger y;len
+elseif. type = <int32 do. len =.2+ 8
+res =. unpackInteger y;len
+elseif. type = <int64 do. len =.2+ 16
+res =. unpackInteger y;len
+NB. floats
+elseif. type = <float32 do. len =.2+ 8
+res =.unpackFloat  y;len
+elseif. type = <float64 do. len =. 2+16
+res =.unpackFloat  y;len
+NB. arrays
+elseif. (dfh{.>type) = 9 do. len =. 2* dfh( 1{ > type) NB. second hex digit is length
+res =.readLen (strip2 y);len 
+elseif. type = <array16 do. len =.4 NB.len =. 4 + (dfh 4{. strip2 y)
+res =.readLen (strip2 y);len 
+elseif. type = <array32 do. len =.8 NB.len =. 8 + (dfh 8{. strip2 y)
+res =.readLen (strip2 y);len 
 end.
+
+res
+)
+
+none=: monad define
+r =: ''
+''
+)
+NB. takes the bytes to be read and the length to read.
+NB. returns the unpacked bytes and the remaining bytes to be read.
+read =: verb define
+bytes =. >0{y
+len =. >1{y
+
+(unpack len {. bytes);(len}.bytes)
+
+)
+NB. tacit read
+rd =: >@(1&{@]) (unpack@{.;}.) >@(0&{@])
+
+readLen =: verb define
+smoutput 'entry is ',":y
+data =. >0{y
+len =. >1{y
+reslt=: ''
+while. len > 0 do.
+box =. read data;2
+reslt =: reslt, 0{ box
+data =. >1{box
+len =. len - 2
+end.
+reslt
 )
