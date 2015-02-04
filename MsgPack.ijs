@@ -383,13 +383,13 @@ res =: ''
 if. 0 = # y do.
 NB. strings
 elseif. ({. > type) e.'ab' do. len =.2+2* (dfh > type) - 160
-res =: unpackString y;len
+res =: unpackString len{.y
 elseif. type = <str8 do. len =.2+2* dfh (2 3{.y)
-res =: unpackString y;len
+res =: unpackString len{.y
 elseif. type = <str16 do. len =.2+2* dfh (2 3 4 5{.y)
-res =: unpackString y;len
+res =: unpackString len{.y
 elseif. type = <str32 do. len =.2+2* dfh (2 3 4 5 6 7 8 9{.y)
-res =: unpackString y;len
+res =: unpackString len{.y
 NB. integers
 elseif. (dfh{.>type) < 8 do. len =.2+ 0
 res =. unpackInteger y;len
