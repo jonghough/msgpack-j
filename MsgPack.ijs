@@ -29,8 +29,6 @@ else. result =. '0',result end.
 end.
 result
 )
-
-
 NB. Calculates hex from decimal
 NB. and stretches the number of bytes to the
 NB. required amount, either padding 0's or F's
@@ -46,7 +44,6 @@ result =. append, result
 end.
 result
 )
-
 
 NB. ==============================
 NB. PACK AN OBJECT
@@ -124,11 +121,11 @@ result
 NB. ====================================
 NB. PACK STRINGS
 NB. ====================================
-cs =: , @: hfd @: (a.&i.)
+convertString =: , @: hfd @: (a.&i.)
 
 packString =: monad define
 result =. ''
-hexStr =. cs y
+hexStr =. convertString y
 len =. 2%~ # hexStr
 if. len < 32 do. # NB. Up to 32 bytes
 pre =. hfd2 160 OR len
@@ -147,8 +144,6 @@ elseif. 1 do.
 end.
 result
 )
-
-
 
 NB. ====================================
 NB. PACK ARRAYS
@@ -187,6 +182,17 @@ end.
 result
 )
 
+NB. ====================================
+NB. PACK BIN
+NB. ====================================
+packBin =: monad define
+result =. ''
+len =. # y
+if. len < (2^8) do. bin8, (1 hfd_stretch len), y
+elseif. len < (2^16) do. bin16, (2 hfd_stretch len), y
+elseif. len < (2^32) do. bin32, (4 hfd_stretch len), y
+end.
+)
 
 NB. ====================================
 NB. PACK NIL
@@ -227,7 +233,6 @@ end.
 result
 )
 
-
 NB. ====================================
 NB. UNPACK BOOLS
 NB. ====================================
@@ -235,7 +240,6 @@ NB. ====================================
 unpackTrue =: 1
 unpackFalse =: 0
 unpackNil =: 0 NB. no null in J. TODO change this to more suitable type.
-
 
 NB. ====================================
 NB. UNPACK INTEGERS
@@ -254,7 +258,6 @@ elseif. (<2{.y) = <'cf' do. result =. dfh strip2 data
 end.
 result
 )
-
 
 NB. Take the first two items
 take2 =: 2&{.
@@ -278,7 +281,6 @@ elseif.1 do. result =. floatFromHex 8 {. strip2 y
 end.
 )
 
-
 NB. ====================================
 NB. UNPACK STRINGS
 NB. ====================================
@@ -294,7 +296,6 @@ end.
 result =. a.{~ dfh byteShape len }. y
 result
 )
-
 
 unpackBin =: monad define
 
@@ -418,7 +419,8 @@ len =. >1{y
 NB. tacit read
 rd =: >@(1&{@]) (unpack@{.;}.) >@(0&{@])
 
-
+NB. read data and return the unpacked data
+NB. with the length of the bytes that were read.
 readLen =: verb define
 data =. >0{y
 len =. >1{y
