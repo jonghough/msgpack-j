@@ -11,10 +11,7 @@ NB. operators
 (XOR =: 22 b.),(OR =: 23 b.),(AND =: 17 b.),(NOT =: 20 b.)
 
 NB. can be represented as single byte
-isSmallUInt =: (=(127&AND))*.(0&<)
-isSmallNegInt =: (=(32&AND))*.(0&>)
 isBoxed =: 0&<@:L.
-digitsToString =: ,"2@:(":"0)
 
 NB. Same as hfd, but prepends a leading
 NB. '0' onto hex strings with odd number of
@@ -72,7 +69,7 @@ NB. PACK INTEGERS
 NB. ==============================
 convertInt =: |."1@:,@:(|."1)@:hfd@:(a.&i.)@:(2&(3!:4))
 packInteger =: monad define
-result =. ''
+
 if. y < 0 do.
 if. (y-1) > _32 do. NB. 5 bits 111YYYYY form
 result =. 1 hfd_stretch y
@@ -103,7 +100,6 @@ elseif. 1 do.
 1
 end.
 end.
-result
 )
 
 NB. ====================================
@@ -122,71 +118,59 @@ NB. ====================================
 NB. PACK STRINGS
 NB. ====================================
 convertString =: , @: hfd @: (a.&i.)
-
 packString =: monad define
-result =. ''
 hexStr =. convertString y
 len =. 2%~ # hexStr
 if. len < 32 do. # NB. Up to 32 bytes
 pre =. hfd2 160 OR len
-result =. pre, hexStr
+pre, hexStr
 elseif. len < 2^8 do.
-pre =.str8
-result =. pre, (1 hfd_stretch len), hexStr
+str8 , (1 hfd_stretch len), hexStr
 elseif. len < 2^16 do.
-pre =.str16
-result =. pre, (2 hfd_stretch len), hexStr
+str16 , (2 hfd_stretch len), hexStr
 elseif. len < 2^32 do.
-pre =.str32
-result =. pre, (4 hfd_stretch len), hexStr
+str32 , (4 hfd_stretch len), hexStr
 elseif. 1 do.
 1
 end.
-result
 )
 
 NB. ====================================
 NB. PACK ARRAYS
 NB. ====================================
 packArray =: monad define
-result =. ''
 hexArr =. ' '-.~ packObj"0 y NB. pack the items
 len =. # hexArr
 if.len < 16 do.
 pre =. hfd2 144 OR len NB. 1001XXXX
-result =. ' '-.~ , pre, (hexArr)
+' '-.~ , pre, (hexArr)
 elseif. len < 2^16 do.
-pre =.array16
-result =. pre, (2 hfd_stretch len), (,hexArr)
+array16 , (2 hfd_stretch len), (,hexArr)
 end.
 )
 
 NB. ====================================
 NB. PACK BOX
 NB. ====================================
-packBox =: verb define
-result =. ''
+packBox =: monad define
 len =. # y
-if. len = 1 do. result =. packObj > y
+if. len = 1 do. packObj > y
 else.
 if.len < 16 do.
 pre =. hfd2 144 OR len
 ord =. 0&>.<:#$ y
-result =. ' '-.~ , pre, (, packBox"ord y)
+' '-.~ , pre, (, packBox"ord y)
 elseif. len < 2^16 do.
-pre =.array16
 ord =. 0&>.<:#$ y
-result =. ' '-.~ pre, (2 hfd_stretch len), (, packBox"ord y)
+' '-.~ array16 , (2 hfd_stretch len), (, packBox"ord y)
 end.
 end.
-result
 )
 
 NB. ====================================
 NB. PACK BIN
 NB. ====================================
 packBin =: monad define
-result =. ''
 len =. # y
 if. len < (2^8) do. bin8, (1 hfd_stretch len), y
 elseif. len < (2^16) do. bin16, (2 hfd_stretch len), y
