@@ -339,7 +339,9 @@ res=. len+2
 res
 )
 
-
+NB. Unpacks a byte string into J objects.
+NB. Any arrays will be unpacked into J boxed arrays
+NB. 
 unpack =: monad define
 type =. < take2 y
 len =. _1
@@ -433,4 +435,11 @@ data =. >1{box
 len =. len - 1
 end.
 totalLen
+)
+
+
+NB. this is a stub for an adverb that takes a length from byte stirng
+NB. and performs verb u on the bytes
+withLen =: adverb define
+NB. todo
 )
