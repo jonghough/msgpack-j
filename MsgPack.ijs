@@ -10,7 +10,6 @@ NB. BYTE PREFIXES - constants
 NB. operators
 (XOR =: 22 b.),(OR =: 23 b.),(AND =: 17 b.),(NOT =: 20 b.)
 
-NB. can be represented as single byte
 isBoxed =: 0&<@:L.
 
 NB. Same as hfd, but prepends a leading
@@ -281,8 +280,12 @@ result =. a.{~ dfh byteShape len }. y
 result
 )
 
+NB. unpack binary types.
 unpackBin =: monad define
-
+if.(2<{.y) = <bin8 do. (dfh 2{. strip2) y 
+elseif. (2<{.y) = <bin16 do. (dfh 4{. strip2 y
+elseif. (2<{.y) = <bin32 do. (dfh 8{. strip2 y
+end.
 )
 
 
@@ -381,6 +384,9 @@ elseif. type = <float32 do. len =.2+ 8
 res =.unpackFloat y
 elseif. type = <float64 do. len =. 2+16
 res =.unpackFloat y
+NB. binary
+elseif. type = <bin8 do. len =. 2 + 2
+
 NB. arrays
 elseif. (dfh{.>type) = 9 do. len =. dfh ( 1{ > type) NB. second hex digit is length
 res =.readLen (strip2 y);len
