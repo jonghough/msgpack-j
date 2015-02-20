@@ -298,8 +298,7 @@ result
 )
 
 
-
-unpackArray =: monad define
+getArrayLen =: monad define
 result =.length y
 result
 )
@@ -352,41 +351,27 @@ func =. ''
 res =. ''
 if. 0 = # y do.
 NB. strings
-elseif. ({. > type) e.'ab' do. NB.len =.2+2* (dfh > type) - 160
-res =. unpackString y
-elseif. type = <str8 do. NB.len =.dfh (2 3{y)
-res =. unpackString y
-elseif. type = <str16 do. NB.len =.dfh (2 3 4 5{y)
-res =. unpackString y
-elseif. type = <str32 do. NB.len =.dfh (2 3 4 5 6 7 8 9{y)
-res =. unpackString y
+elseif. ({. > type) e.'ab' do. res =. unpackString y
+elseif. type = <str8 do. res =. unpackString y
+elseif. type = <str16 do. res =. unpackString y
+elseif. type = <str32 do. res =. unpackString y
 NB. integers
-elseif. (dfh{.>type) < 8 do. len =.2+ 0
-res =. unpackInteger y
-elseif. type = <uint8 do. len =. 2+2
-res =. unpackInteger y
-elseif. type = <uint16 do. len =.2+ 4
-res =. unpackInteger y
-elseif. type = <uint32 do. len =.2+ 8
-res =. unpackInteger y
-elseif. type = <uint64 do. len =.2+ 16
-res =. unpackInteger y
-elseif. type = <int8 do. len =.2+ 0
-res =. unpackInteger y
-elseif. type = <int16 do. len =.2+ 4
-res =. unpackInteger y
-elseif. type = <int32 do. len =.2+ 8
-res =. unpackInteger y
-elseif. type = <int64 do. len =.2+ 16
-res =. unpackInteger y
+elseif. (dfh{.>type) < 8 do. res =. unpackInteger y
+elseif. type = <uint8 do. res =. unpackInteger y
+elseif. type = <uint16 do. res =. unpackInteger y
+elseif. type = <uint32 do. res =. unpackInteger y
+elseif. type = <uint64 do. res =. unpackInteger y
+elseif. type = <int8 do. res =. unpackInteger y
+elseif. type = <int16 do. res =. unpackInteger y
+elseif. type = <int32 do. res =. unpackInteger y
+elseif. type = <int64 do. res =. unpackInteger y
 NB. floats
-elseif. type = <float32 do. len =.2+ 8
-res =.unpackFloat y
-elseif. type = <float64 do. len =. 2+16
-res =.unpackFloat y
+elseif. type = <float32 do. res =.unpackFloat y
+elseif. type = <float64 do. res =.unpackFloat y
 NB. binary
-elseif. type = <bin8 do. len =. 2 + 2
-
+elseif. type = <bin8 do. len =. 4
+elseif. type = <bin16 do. len =. 6
+elseif. type = <bin32 do. len =. 10
 NB. arrays
 elseif. (dfh{.>type) = 9 do. len =. dfh ( 1{ > type) NB. second hex digit is length
 res =.readLen (strip2 y);len
@@ -427,6 +412,8 @@ end.
 reslt
 )
 
+NB. Gets the length in bytes of the
+NB. packed array.
 getLen =: verb define
 data =. >0{y
 len =. >1{y
@@ -441,11 +428,4 @@ data =. >1{box
 len =. len - 1
 end.
 totalLen
-)
-
-
-NB. this is a stub for an adverb that takes a length from byte stirng
-NB. and performs verb u on the bytes
-withLen =: adverb define
-NB. todo
 )
