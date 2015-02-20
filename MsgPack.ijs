@@ -383,18 +383,9 @@ end.
 res
 )
 
-
-
 NB. takes the bytes to be read and the length to read.
 NB. returns the unpacked bytes and the remaining bytes to be read.
-read =: verb define
-bytes =. >0{y
-len =. >1{y
-(unpack len {. bytes);(len}.bytes)
-)
-
-NB. tacit read
-rd =: >@(1&{@]) (unpack@{.;}.) >@(0&{@])
+read =: >@(1&{@]) (unpack@{.;}.) >@(0&{@])
 
 NB. read data and return the unpacked data
 NB. with the length of the bytes that were read.
