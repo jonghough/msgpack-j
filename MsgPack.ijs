@@ -193,28 +193,8 @@ NB. ====================================
 isInRange =: ((0&{ @ [) < ]) *. ((1&{ @ [) > ])
 
 NB. Unpack... not finished.
-unpackObj =: monad define
-result =. ''
-if. 2 = # y do. result =: unpackInteger y
-else.
-b1 =. <take2 y
-if. b1 = <false do.
-result =. 0 NB. A false representation in J
-elseif. b1 = <true do.
-result =. 1
-elseif. b1 e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do.
-result =. unpackInteger y
-elseif. (b1 e. str8;str16;str32)+. (159 176 isInRange dfh > b1) do.
-result =. unpackString y
-elseif. 1 do.
-1
-end.
-if. 2 > # strip2 y do.
-result =. result ; (unpackObj strip2 y) NB. TODO, should be boxed?
-end.
-end.
-result
-)
+unpack =: unpackObj@:,@:hfd@:(a.&i.) 
+
 
 NB. ====================================
 NB. UNPACK BOOLS
@@ -344,7 +324,7 @@ res
 NB. Unpacks a byte string into J objects.
 NB. Any arrays will be unpacked into J boxed arrays
 NB. 
-unpack =: monad define
+unpackObj =: monad define
 type =. < take2 y
 len =. _1
 func =. ''
@@ -385,7 +365,7 @@ res
 
 NB. takes the bytes to be read and the length to read.
 NB. returns the unpacked bytes and the remaining bytes to be read.
-read =: >@(1&{@]) (unpack@{.;}.) >@(0&{@])
+read =: >@(1&{@]) (unpackObj@{.;}.) >@(0&{@])
 
 NB. read data and return the unpacked data
 NB. with the length of the bytes that were read.
