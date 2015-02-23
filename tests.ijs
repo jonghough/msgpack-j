@@ -46,5 +46,6 @@ NB. skip below test. It adds trailing elipsis. Needs fixing
 NB. packObj testAdverb ( 'Lorem ipsum dolor sit amet, omnis quaeque vituperatoribus has te, atqui congue expetendis eu pri, denique liberavisse cu mel. Eripuit minimum an sit, at graece semper atomorum nam, ei disputando eloquentiam definitiones sit. Oratio latine comprehensam an quo. Ei usu partem putent equidem, an labitur saperet vivendum mea.';'da01424c6f72656d20697073756d20646f6c6f722073697420616d65742c206f6d6e69732071756165717565207669747570657261746f7269627573206861732074652c20617471756920636f6e677565206578706574656e646973206575207072692c2064656e69717565206c69626572617669737365206375206d656c2e')
 
 NB. UNPACK tests
-unpack compare ('02';2)
-unpack compare ( 'ce00347457';3437655)
+unpackObj compare ('02';2)
+unpackObj compare ( 'ce00347457';3437655)
+unpackObj compare ( '94050607ab736f6d6520737472696e67'; (5;6;7;'some string'))

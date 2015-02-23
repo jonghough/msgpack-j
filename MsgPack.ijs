@@ -291,30 +291,30 @@ type =. < take2 y
 len =. _1
 
 NB. strings
-if. ({. > type) e.'ab' do. len =. 2* (dfh > type) - 160
-elseif. type = <str8 do.
+if. ({.>type) e.'ab' do. len=.2*(dfh>type)-160
+elseif. type=<str8 do.
 smoutput 'y ',":y
-len =.2+2* dfh (2 3{y)
-elseif. type = <str16 do. len =.4+ 2*dfh (2 3 4 5{y)
-elseif. type = <str32 do. len =.8+ 2*dfh (2 3 4 5 6 7 8 9{y)
+len =.2+2*dfh (2 3{y)
+elseif. type=<str16 do. len=.4+2*dfh(2+i.4){y
+elseif. type=<str32 do. len=.8+2*dfh(2+i.8){y
 NB. integers
-elseif. (dfh{.>type) < 8 do. len =. 0
-elseif. type = <uint8 do. len =. 2
-elseif. type = <uint16 do. len =. 4
-elseif. type = <uint32 do. len =. 8
-elseif. type = <uint64 do. len =. 16
-elseif. type = <int8 do. len =. 0
-elseif. type = <int16 do. len =. 4
-elseif. type = <int32 do. len =. 8
-elseif. type = <int64 do. len =. 16
+elseif. (dfh{.>type) < 8 do. len=.0
+elseif. type=<uint8 do. len=.2
+elseif. type=<uint16 do. len=.4
+elseif. type=<uint32 do. len=.8
+elseif. type=<uint64 do. len=.16
+elseif. type=<int8 do. len=.0
+elseif. type=<int16 do. len=.4
+elseif. type=<int32 do. len=.8
+elseif. type=<int64 do. len=.16
 NB. floats
-elseif. type = <float32 do. len =. 8
-elseif. type = <float64 do. len =. 16
-elseif. (dfh{.>type) = 9 do. len =. dfh ( 1{ > type) NB. second hex digit is length
+elseif. type=<float32 do. len=.8
+elseif. type=<float64 do. len=.16
+elseif. (dfh{.>type)=9 do. len=.dfh 1{>type NB. second hex digit is length
 len=. getLen (strip2 y);len
-elseif. type = <array16 do. len =.  ( dfh 4{. strip2 y)
+elseif. type=<array16 do. len=.dfh 4{.strip2 y
 len=. getLen 4}.(strip2 y);len
-elseif. type = <array32 do. len =. (dfh 8{. strip2 y)
+elseif. type=<array32 do. len=.dfh 8{.strip2 y
 len=. getLen 8}.(strip2 y);len
 end.
 res=. len+2
