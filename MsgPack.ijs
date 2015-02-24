@@ -15,16 +15,7 @@ isBoxed =: 0&<@:L.
 NB. Same as hfd, but prepends a leading
 NB. '0' onto hex strings with odd number of
 NB. characters.
-hfd2 =: monad define
-h=. hfd y
-len =. # h
-result =. h
-if. (2 | len) = 1 do.
-if. y < 0 do. result =. 'f',result
-else. result =. '0',result end.
-end.
-result
-)
+hfd2 =: hfd`(('f'&,@hfd)`('0'&,@hfd)@.(0&<))@.(2&|@#@hfd)
 NB. Calculates hex from decimal
 NB. and stretches the number of bytes to the
 NB. required amount, either padding 0's or F's
@@ -400,3 +391,5 @@ len =. len - 1
 end.
 totalLen
 )
+
+hfd3 =: hfd`(('f'&,@hfd)`('0'&,@hfd)@.(0&<))@.(2&|@#@hfd)
