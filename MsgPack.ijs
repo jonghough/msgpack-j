@@ -16,6 +16,7 @@ NB. Same as hfd, but prepends a leading
 NB. '0' onto hex strings with odd number of
 NB. characters.
 hfd2 =: hfd`(('f'&,@hfd)`('0'&,@hfd)@.(0&<))@.(2&|@#@hfd)
+
 NB. Calculates hex from decimal
 NB. and stretches the number of bytes to the
 NB. required amount, either padding 0's or F's
@@ -31,6 +32,8 @@ result =. append, result
 end.
 result
 )
+NB. Get the decimal representation of the hex string
+dfh_unstretch =: dfh@] - 2&^@(8&*@[)
 
 NB. ==============================
 NB. PACK AN OBJECT
@@ -190,7 +193,6 @@ unpack =: unpackObj@:,@:hfd@:(a.&i.)
 NB. ====================================
 NB. UNPACK BOOLS
 NB. ====================================
-
 unpackTrue =: 1
 unpackFalse =: 0
 unpackNil =: 0 NB. no null in J. TODO change this to more suitable type.
@@ -201,14 +203,24 @@ NB. ====================================
 
 NB. todo - finish for all integer lengths int/uint
 unpackInteger =: monad define
+
 result =. ''
 data =. y
 len=. #y
-if. len = 2 do. result =. dfh data
+if. len = 2 do. 
+if. (0{y)e. 'ef' do.
+result =. (dfh data) - 256
+else.
+result =. dfh data
+end.
 elseif. (<2{.y) = <'cc' do. result =. dfh strip2 data
 elseif. (<2{.y) = <'cd' do. result =. dfh strip2 data
 elseif. (<2{.y) = <'ce' do. result =. dfh strip2 data
 elseif. (<2{.y) = <'cf' do. result =. dfh strip2 data
+elseif. (<2{.y) = <'d0' do. result =. 1 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d1' do. result =. 2 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d2' do. result =. 3 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d3' do. result =. 4 dfh_unstretch strip2 data
 end.
 result
 )
@@ -290,6 +302,7 @@ elseif. type=<str16 do. len=.4+2*dfh(2+i.4){y
 elseif. type=<str32 do. len=.8+2*dfh(2+i.8){y
 NB. integers
 elseif. (dfh{.>type) < 8 do. len=.0
+elseif. (0{>type)e.'ef' do. len=.0
 elseif. type=<uint8 do. len=.2
 elseif. type=<uint16 do. len=.4
 elseif. type=<uint32 do. len=.8
@@ -328,6 +341,7 @@ elseif. type = <str16 do. res =. unpackString y
 elseif. type = <str32 do. res =. unpackString y
 NB. integers
 elseif. (dfh{.>type) < 8 do. res =. unpackInteger y
+elseif. (0{>type)e.'ef' do.res =. unpackInteger y
 elseif. type = <uint8 do. res =. unpackInteger y
 elseif. type = <uint16 do. res =. unpackInteger y
 elseif. type = <uint32 do. res =. unpackInteger y
@@ -391,5 +405,3 @@ len =. len - 1
 end.
 totalLen
 )
-
-hfd3 =: hfd`(('f'&,@hfd)`('0'&,@hfd)@.(0&<))@.(2&|@#@hfd)
