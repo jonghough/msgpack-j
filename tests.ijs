@@ -9,6 +9,10 @@ compare =: 2 : '((u&.>)0{n) = (1{n)'
 NB. INTEGERS TESTS
 packObj compare ( 2; '02')
 packObj compare ( 34; '22')
+packObj compare ( 128; 'cc80')
+packObj compare ( _128; 'd1ff80')
+packObj compare ( 65536; 'ce00010000')
+packObj compare ( _65536; 'd2ffff0000')
 packObj compare ( 3437655; 'ce00347457')
 packObj compare ( 20102300000; 'cf00000004ae30c160')
 packObj compare (4294967296;'cf0000000100000000')
