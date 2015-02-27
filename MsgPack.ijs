@@ -203,31 +203,23 @@ NB. ====================================
 
 NB. todo - finish for all integer lengths int/uint
 unpackInteger =: monad define
-
-result =. ''
 data =. y
-smoutput 'entry data is ',":data
 len=. #y
 if. len = 2 do. 
 if. (0{y)e. 'ef' do.
-result =. (dfh data) - 256
+(dfh data) - 256
 else.
-result =. dfh data
+dfh data
 end.
-elseif. (<2{.y) = <'cc' do. result =. dfh strip2 data
-elseif. (<2{.y) = <'cd' do. result =. dfh strip2 data
-elseif. (<2{.y) = <'ce' do. result =. dfh strip2 data
-elseif. (<2{.y) = <'cf' do. result =. dfh strip2 data
-elseif. (<2{.y) = <'d0' do. result =. 1 dfh_unstretch strip2 data
-smoutput 'data :  ',":data
-smoutput 'result:  ',":result
-elseif. (<2{.y) = <'d1' do. result =. 2 dfh_unstretch strip2 data
-smoutput 'data :  ',":data
-smoutput 'result:  ',":result
-elseif. (<2{.y) = <'d2' do. result =. 4 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d3' do. result =. 8 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'cc' do. dfh strip2 data
+elseif. (<2{.y) = <'cd' do. dfh strip2 data
+elseif. (<2{.y) = <'ce' do. dfh strip2 data
+elseif. (<2{.y) = <'cf' do. dfh strip2 data
+elseif. (<2{.y) = <'d0' do. 1 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d1' do. 2 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d2' do. 4 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d3' do. 8 dfh_unstretch strip2 data
 end.
-result
 )
 
 NB. Take the first two items
@@ -238,7 +230,6 @@ NB. Reshapes the hexstirng into a 4x2 array of hex stirngs,
 NB. representing bytes.
 byteShape =: 2&(,~)@:(2&(%~))@:# $ ]
 NB. Gets a J float from the hex string
-
 floatFromHex =: _2&(3!:5)@:|.@:(a.&({~))@:dfh@:byteShape
 
 NB. ====================================
@@ -300,7 +291,6 @@ len =. _1
 NB. strings
 if. ({.>type) e.'ab' do. len=.2*(dfh>type)-160
 elseif. type=<str8 do.
-smoutput 'y ',":y
 len =.2+2*dfh (2 3{y)
 elseif. type=<str16 do. len=.4+2*dfh(2+i.4){y
 elseif. type=<str32 do. len=.8+2*dfh(2+i.8){y
@@ -334,8 +324,6 @@ NB.
 unpackObj =: monad define
 type =. < take2 y
 len =. _1
-
-smoutput ": y, (":type)
 if. 0 = # y do.
 NB. strings
 elseif. ({. > type) e.'ab' do. unpackString y
