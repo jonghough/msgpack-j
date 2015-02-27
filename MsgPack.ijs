@@ -219,8 +219,8 @@ elseif. (<2{.y) = <'ce' do. result =. dfh strip2 data
 elseif. (<2{.y) = <'cf' do. result =. dfh strip2 data
 elseif. (<2{.y) = <'d0' do. result =. 1 dfh_unstretch strip2 data
 elseif. (<2{.y) = <'d1' do. result =. 2 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d2' do. result =. 3 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d3' do. result =. 4 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d2' do. result =. 4 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d3' do. result =. 8 dfh_unstretch strip2 data
 end.
 result
 )
