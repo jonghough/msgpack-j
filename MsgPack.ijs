@@ -335,7 +335,7 @@ elseif. type e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInte
 NB. floats
 elseif. type e. float32;float64 do. unpackFloat y
 NB. binary
-elseif. type e. bin8;bin16;bin32 do. len =. 4 NB. TODO
+elseif. type e. bin8;bin16;bin32 do. unpackBin y
 NB. arrays
 elseif. (dfh{.>type) = 9 do. len=.dfh (1{>type) NB. second hex digit is length
 readLen (strip2 y);len
