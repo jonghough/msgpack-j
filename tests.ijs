@@ -5,6 +5,7 @@ NB. compare adverb.
 NB. 0{n is the argument, u is the verb to be tested,
 NB. 1{n is the expected result (boxed)
 compare =: 2 : '((u&.>)0{n) = (1{n)'
+match =: 2 : '((u&.>)0{n) -: (((_1&*@<: @#) {. ])n)'
 
 NB. INTEGERS TESTS
 packObj compare ( 2; '02')
@@ -52,4 +53,7 @@ NB. packObj testAdverb ( 'Lorem ipsum dolor sit amet, omnis quaeque vituperatori
 NB. UNPACK tests
 unpackObj compare ('02';2)
 unpackObj compare ( 'ce00347457';3437655)
-unpackObj compare ( '94050607ab736f6d6520737472696e67'; (5;6;7;'some string'))
+unpackObj compare ( 'ce00347457';3437655)
+unpackObj compare ( '9acd0100cd0101cd0102cd0103cd0104cd0105cd0106cd0107cd0108cd0109';(<;/ (2^8)+i.10))
+
+unpackObj match ( '94050607ab736f6d6520737472696e67'; (5;6;7;'some string'))
