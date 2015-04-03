@@ -79,7 +79,8 @@ NB. NOTHING
     1
   end.
 elseif. 1 do.
-  if. y < 128 do.
+  if. y=0 do. '00'
+  elseif. y < 128 do.
     result=. hfd2 y
   elseif. y < 256 do.
     result=. uint8, (1 hfd_stretch y)
@@ -205,7 +206,8 @@ NB. todo - finish for all integer lengths int/uint
 unpackInteger=: monad define
 data=. y
 len=. #y
-if. len = 2 do.
+if. len = 1 do. 0 
+elseif. len = 2 do.
   if. (0{y)e. 'ef' do.
     (dfh data) - 256
   else.
