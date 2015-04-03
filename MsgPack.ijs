@@ -288,6 +288,7 @@ result
 NB. Gives the number of chars to take from the
 NB. argument to parse in the next deserialization call.
 length=: monad define
+smoutput 'length value ',": y
 type=. < take2 y
 len=. _1
 NB. strings
@@ -313,9 +314,9 @@ elseif. type=<float64 do. len=. 16
 elseif. (dfh{.>type)=9 do. len=. dfh 1{>type NB. second hex digit is length
   len=. getLen (strip2 y);len
 elseif. type=<array16 do. len=. dfh 4{.strip2 y
-  len=. getLen 4}.(strip2 y);len
+  len=. getLen 4{.(strip2 y);len
 elseif. type=<array32 do. len=. dfh 8{.strip2 y
-  len=. getLen 8}.(strip2 y);len
+  len=. getLen 8{.(strip2 y);len
 end.
 len+2 NB. add the prefix byte.
 )
