@@ -65,15 +65,15 @@ packInteger=: monad define
 
 if. y < 0 do.
   if. y > _32 do. NB. 5 bits 111YYYYY form
-    result=. 1 hfd_stretch y
+    1 hfd_stretch y
   elseif. y > _128 do.
-    result=. int8, (1 hfd_stretch y)
+    int8, (1 hfd_stretch y)
   elseif. y > (_1*2^16) do.
-    result=. int16, (2 hfd_stretch y)
+    int16, (2 hfd_stretch y)
   elseif. y > (_1*2^32) do.
-    result=. int32, (4 hfd_stretch y)
+    int32, (4 hfd_stretch y)
   elseif. y > (_1*2^64) do.
-    result=. int64, (8 hfd_stretch y)
+    int64, (8 hfd_stretch y)
   elseif. 1 do.
 NB. NOTHING
     1
@@ -81,15 +81,15 @@ NB. NOTHING
 elseif. 1 do.
   if. y=0 do. '00'
   elseif. y < 128 do.
-    result=. hfd2 y
+    hfd2 y
   elseif. y < 256 do.
-    result=. uint8, (1 hfd_stretch y)
+    uint8, (1 hfd_stretch y)
   elseif. y < (2^16) do.
-    result=. uint16, (2 hfd_stretch y)
+    uint16, (2 hfd_stretch y)
   elseif. y < (2^32) do.
-    result=. uint32, (4 hfd_stretch y)
+    uint32, (4 hfd_stretch y)
   elseif. y < (2^64) do.
-    result=. uint64, (8 hfd_stretch y)
+    uint64, (8 hfd_stretch y)
   elseif. 1 do.
     1
   end.
@@ -101,11 +101,9 @@ NB. PACK FLOATS
 NB. =========================================================
 convertFloat=: |."1@:,@:(|."1)@:hfd@:(a.&i.)@:(2&(3!:5))
 packFloat=: monad define
-result=. ''
-if. (=<.) y do. result=. packInteger y NB. if can be cast to integer then pack as an integer.
-elseif. 1 do. result=. float64, convertFloat y
+if. (=<.) y do. packInteger y NB. if can be cast to integer then pack as an integer.
+elseif. 1 do. float64, convertFloat y
 end.
-result
 )
 
 NB. =========================================================
@@ -206,7 +204,7 @@ NB. todo - finish for all integer lengths int/uint
 unpackInteger=: monad define
 data=. y
 len=. #y
-if. len = 1 do. 0 
+if. len = 1 do. 0
 elseif. len = 2 do.
   if. (0{y)e. 'ef' do.
     (dfh data) - 256
@@ -288,7 +286,6 @@ result
 NB. Gives the number of chars to take from the
 NB. argument to parse in the next deserialization call.
 length=: monad define
-smoutput 'length value ',": y
 type=. < take2 y
 len=. _1
 NB. strings
