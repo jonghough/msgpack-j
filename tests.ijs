@@ -55,5 +55,4 @@ unpackObj compare ('02';2)
 unpackObj compare ( 'ce00347457';3437655)
 unpackObj compare ( 'ce00347457';3437655)
 unpackObj compare ( '9acd0100cd0101cd0102cd0103cd0104cd0105cd0106cd0107cd0108cd0109';(<;/ (2^8)+i.10))
-
 unpackObj compare ( '94050607ab736f6d6520737472696e67'; (<5;6;7;'some string'))

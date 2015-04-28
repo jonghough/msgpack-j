@@ -1,6 +1,6 @@
 NB. J implementation of MsgPack
 NB. @author Jon Hough
-
+NB.
 NB. BYTE PREFIXES - constants
 (nil=: 'c0'),(reserved=: 'c1'),(false=: 'c2'),(true=: 'c3'),(bin8=: 'c4'),(bin16=: 'c5'),(bin32=: 'c6'),(ext8=: 'c7'),(ext16=: 'c8')
 (ext32=: 'c9'),(float32=: 'ca'),(float64=: 'cb'),(uint8=: 'cc'),(uint16=: 'cd'),(uint32=: 'ce'),(uint64=: 'cf'),(int8=: 'd0'),(int16=: 'd1')
@@ -256,10 +256,11 @@ elseif. 1 do.
   len=. 2
 end.
 result=. a.{~ dfh byteShape len }. y
-result
+'"',result,'"'
 )
-
-NB. unpack binary types.
+NB. =========================================================
+NB. UNPACK BINARY
+NB. =========================================================
 unpackBin=: monad define
 if.(2<{.y) = <bin8 do. (dfh 2{. strip2) y
 elseif. (2<{.y) = <bin16 do. (dfh 4{. strip2 y
@@ -267,7 +268,9 @@ elseif. (2<{.y) = <bin32 do. (dfh 8{. strip2 y
 end.
 )
 
-
+NB. =========================================================
+NB. UNPACK MAPS
+NB. =========================================================
 unpackMap=: monad define
 if. (2<{.y) e. (map16; map32) do.
   len=. dfh 4{. strip2 y
@@ -276,6 +279,13 @@ end.
 result
 )
 
+NB.fixmap stores a map whose length is upto 15 elements
+NB.+--------+~~~~~~~~~~~~~~~~~+
+NB.|1000XXXX| N*2 objects |
+NB.+--------+~~~~~~~~~~~~~~~~~+
+unpackFixMap=: monad define
+
+)
 
 getArrayLen=: monad define
 result=. length y
@@ -294,6 +304,9 @@ elseif. type=<str8 do.
   len=. 2+2*dfh (2 3{y)
 elseif. type=<str16 do. len=. 4+2*dfh(2+i.4){y
 elseif. type=<str32 do. len=. 8+2*dfh(2+i.8){y
+NB. boolean
+elseif. type=<true do. len=. 0
+elseif. type=<false do. len=. 0
 NB. integers
 elseif. (dfh{.>type) < 8 do. len=. 0
 elseif. (0{>type)e.'ef' do. len=. 0
@@ -311,9 +324,12 @@ elseif. type=<float64 do. len=. 16
 elseif. (dfh{.>type)=9 do. len=. dfh 1{>type NB. second hex digit is length
   len=. getLen (strip2 y);len
 elseif. type=<array16 do. len=. dfh 4{.strip2 y
-  len=.4+getLen (strip2 y);len
+  len=. 4+getLen (strip2 y);len
 elseif. type=<array32 do. len=. dfh 8{.strip2 y
-  len=.8+getLen (strip2 y);len
+  len=. 8+getLen (strip2 y);len
+NB. map
+elseif. 1 do. len=. dfh 1{>type
+  len=. getMapLen (strip2 y);len
 end.
 len+2 NB. add the prefix byte.
 )
@@ -325,6 +341,8 @@ unpackObj=: monad define
 type=. < take2 y
 len=. _1
 if. 0 = # y do.
+elseif.type=<true do. 1
+elseif.type=<false do. 0
 NB. strings
 elseif. ({. > type) e.'ab' do. unpackString y
 elseif. type e. str8;str16;str32 do. unpackString y
@@ -338,11 +356,19 @@ NB. binary
 elseif. type e. bin8;bin16;bin32 do. unpackBin y
 NB. arrays
 elseif. (dfh{.>type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
- readLen (strip2 y);len
+  readLenToJSON (strip2 y);len
 elseif. type = <array16 do. len=. (dfh 4{.strip2 y)
-  readLen (4}. strip2 y);len
+  readLenToJSON (4}. strip2 y);len
 elseif. type = <array32 do. len=. (dfh 8{.strip2 y)
-  readLen (8}.strip2 y);len
+  readLenToJSON (8}.strip2 y);len
+NB. Maps
+elseif. (dfh 0{>type) = 8 do. NB. fixed map
+  len=. dfh (1{>type)
+  readMapLenToJSON (strip2 y);len
+elseif. type =< map16 do. len=. (dfh 4{.strip2 y)
+  readMapLenToJSON (4}. strip2 y);len
+elseif. type =< map32 do. len=. (dfh 8{.strip2 y)
+  readMapLenToJSON (8}.strip2 y);len
 elseif. 1 do.
   1
 end.
@@ -368,6 +394,71 @@ end.
 reslt
 )
 
+NB. Reads the given length of bytes from the data and returns JSON format representation
+NB. of the data.
+readLenToJSON=: verb define
+data=. >0{y
+len=. >1{y
+reslt=. '['
+while. len > 0 do.
+  k=. length data
+  box=. read data;k
+  if. len > 1 do.
+    reslt=. reslt, (":>0{ box), ','
+  else. reslt=. reslt, ":>0{ box end.
+  data=. >1{box
+  len=. len - 1
+end.
+reslt,']'
+)
+
+NB. ============= TODO ==============
+NB. This verb will output a dictionary
+NB. of some sort. Such a dictionary needs
+NB. implementing first.
+NB. ============= TODO ==============
+readMapLen=: verb define
+data=. >0{y
+len=. 2 * >1{y NB. two objects , because map.
+reslt=. '{'
+isKey=. 1 NB. key or value
+while. len > 0 do.
+  k=. length data
+  box=. read data;k
+  if. isKey do.
+    reslt=. reslt, (":>0{ box ), ':'
+  else. reslt=. reslt,(":>0{ box )
+    if. len > 1 do. reslt=. reslt,','end.
+  end.
+  data=. >1{box
+  len=. len - 1
+  isKey=. 2 | (isKey + 1)
+end.
+reslt,'}'
+)
+
+NB. see: readMapLen.
+NB. Reads bytes and returns a JSON key value pair.
+readMapLenToJSON=: verb define
+data=. >0{y
+len=. 2 * >1{y NB. two objects , because map.
+reslt=. '{'
+isKey=. 1 NB. key or value
+while. len > 0 do.
+  k=. length data
+  box=. read data;k
+  if. isKey do.
+    reslt=. reslt, (":>0{ box ), ':'
+  else. reslt=. reslt,(":>0{ box )
+    if. len > 1 do. reslt=. reslt,','end.
+  end.
+  data=. >1{box
+  len=. len - 1
+  isKey=. 2 | (isKey + 1)
+end.
+reslt,'}'
+)
+
 NB. Gets the length in bytes of the
 NB. packed array.
 getLen=: verb define
@@ -385,3 +476,24 @@ while. len > 0 do.
 end.
 totalLen
 )
+
+getMapLen=: verb define
+data=. >0{y
+len=. 2* >1{y
+totalLen=. 0
+reslt=. ''
+while. len > 0 do.
+  k=. length data
+  totalLen=. totalLen + k
+  box=. read data;k
+  reslt=. reslt, 0{ box
+  data=. >1{box
+  len=. len - 1
+end.
+totalLen
+)
+
+
+
+NB. ============ SOME UTILITIES =========
+insertSpaces=: ,@:(' '&(,~"1))@:(,&2@:(-:@:#) $ ])
