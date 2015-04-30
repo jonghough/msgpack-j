@@ -24,6 +24,15 @@ for_j. i. MAX do.
 end.
 )
 
+size =: monad define
+count =. 0
+for_j. i. MAX do.
+ent =. j{entries
+if. isSet__ent do. count =. count + 1
+end.
+end.
+count
+)
 
 NB. set a new key value pair.
 NB. Should be boxed pair (key;value)
@@ -35,6 +44,28 @@ i=. conew 'Entry'
 create__i rk;hk;val
 hk append i
 ''
+)
+
+enumerate =: monad define
+result =. ''
+for_j. i. MAX do.
+ent =. j{entries
+if. isSet__ent do. 
+result =. result,<(rawKey__ent; value__ent)
+end.
+end.
+result
+)
+
+apply =: monad define
+result =. ''
+for_j. i. MAX do.
+ent =. j{entries
+if. isSet__ent do. 
+result =. result,((y`:6) rawKey__ent), ((y`:6) value__ent)
+end.
+end.
+result
 )
 
 NB. Append the new Entry to the hashmap.

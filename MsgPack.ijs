@@ -176,6 +176,14 @@ NB. probably pointless
 NB. =========================================================
 packNil=: nil
 
+
+packMap =: monad define
+hMap =. y NB. hashmap
+size =. size__hMap
+prefix =. '8', (2 hfd_stretch size)
+
+)
+
 NB. Pack -> Int array, char.
 pack=: (a.&({~))@:dfh@:byteShape@:packObj
 
