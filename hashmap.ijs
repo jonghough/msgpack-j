@@ -17,7 +17,7 @@ NB. Hashmap will contain Entry objects.
 coclass 'HashMap'
 entries=: ''
 count=: ''
-MAX=: 2
+MAX=: 20
 
 NB. INitialize and create buckets
 create=: monad define
@@ -28,12 +28,12 @@ end.
 
 NB. Gets the size of the hashmap,
 NB. number of key/value pairs.
-size =: monad define
-count =. 0
+size=: monad define
+count=. 0
 for_j. i. MAX do.
-ent =. j{entries
-if. isSet__ent do. count =. count + getSize__ent ''
-end.
+  ent=. j{entries
+  if. isSet__ent do. count=. count + getSize__ent ''
+  end.
 end.
 count
 )
@@ -52,25 +52,25 @@ hk append i
 
 NB. Returns list of all key value pairs
 NB. in an arbitrary order.
-enumerate =: monad define
-result =. ''
+enumerate=: monad define
+result=. ''
 for_j. i. MAX do.
-ent =. j{entries
-if. isSet__ent do. 
-result =. result, (enumerate__ent '')
-end.
+  ent=. j{entries
+  if. isSet__ent do.
+    result=. result, (enumerate__ent '')
+  end.
 end.
 result
 )
 
 NB. UNUSED!
-apply =: monad define
-result =. ''
+apply=: monad define
+result=. ''
 for_j. i. MAX do.
-ent =. j{entries
-if. isSet__ent do. 
-result =. result,((y`:6) rawKey__ent), ((y`:6) value__ent)
-end.
+  ent=. j{entries
+  if. isSet__ent do.
+    result=. result,((y`:6) rawKey__ent), ((y`:6) value__ent)
+  end.
 end.
 result
 )
@@ -78,14 +78,14 @@ result
 NB. Append the new Entry to the hashmap.
 append=: dyad define
 ent=. x { entries
-newent =. y
+newent=. y
 NB. if empty slot, put new item in it.
 if. 0 = isSet__ent do.
   entries=: y x} entries
 NB. if not empty, but raw keys are identical, refill.
 elseif. rawKey__ent -: rawKey__newent do.
-smoutput rawKey__ent
-smoutput rawKey__newent
+  smoutput rawKey__ent
+  smoutput rawKey__newent
   entries=: newent x} entries
 NB. else append to the last in linkedlist
 elseif. 1 do.
@@ -106,7 +106,7 @@ end.
 
 NB. Removes a single entry form the hashmap, if
 NB. the given key matches the key of the entry.
-remove =: monad define
+remove=: monad define
 ky=. y
 hk=. hash ky
 ent=. hk{entries
@@ -114,24 +114,24 @@ NB. if no entry, then return.
 if. 0 = isSet__ent do. 0
 NB. keys match...
 elseif. key__ent -: hk do.
- NB. check if raw keys match...
-  if. ky -: rawKey__ent do. 
-	NB. linked list is 0 so remove this item.
-	if. 0 = # next__ent do.
-		reset__ent ''
-		smoutput isSet__ent
-		1
-	NB. linked list has elements so put
-	NB. next element in bucket (becomes head of list).
-	else. entries =: next__ent hk} entries
-          	reset__ent ''
-		1
-	end.
-  NB. raw keys do not match, check next element.
-  else. 
-	nextent =. next__ent
-	ent removeFromList__nextent y
-   end.
+NB. check if raw keys match...
+  if. ky -: rawKey__ent do.
+NB. linked list is 0 so remove this item.
+    if. 0 = # next__ent do.
+      reset__ent ''
+      smoutput isSet__ent
+      1
+NB. linked list has elements so put
+NB. next element in bucket (becomes head of list).
+    else. entries=: next__ent hk} entries
+      reset__ent ''
+      1
+    end.
+NB. raw keys do not match, check next element.
+  else.
+    nextent=. next__ent
+    ent removeFromList__nextent y
+  end.
 end.
 )
 
@@ -166,16 +166,16 @@ NB. =============== ENTRY CLASS =============
 NB. Entry class contains key value pair and "pointer"
 NB. to potential next entry in LinkedList fashion.
 coclass 'Entry'
-key=: ''   	NB. The key (hashed)
+key=: '' 	NB. The key (hashed)
 value=: '' 	NB. The value
-next=: ''  	NB. The next value, if any
+next=: '' 	NB. The next value, if any
 rawKey=: '' 	NB. The raw, unhashed, key
 isSet=: 0 	NB. flag for instantiated or not.
 
 create=: 3 : 0
 rawKey=: >0{y
 key=: >1{y
-value=: >2{y
+value=: 2{y
 isSet=: 1
 )
 
@@ -190,11 +190,11 @@ elseif. 1 do.
 end.
 )
 
-enumerate =: monad define
+enumerate=: monad define
 if. 0 = # next do.
-<(rawKey; value)
-else. 
-(<(rawKey;value)),( enumerate__next '')
+  <(rawKey; value)
+else.
+  (<(rawKey;value)),( enumerate__next '')
 end.
 )
 
@@ -208,18 +208,18 @@ elseif. 1 do.
 end.
 )
 
-removeFromList =: dyad define
-rk =. y NB. a raw key
-last =. x NB. the last entry in this list
+removeFromList=: dyad define
+rk=. y NB. a raw key
+last=. x NB. the last entry in this list
 if. rk -: rawKey do.
-next__last =: next NB. relink the last/next items.
-reset ''
-1
+  next__last=: next NB. relink the last/next items.
+  reset ''
+  1
 elseif. 0 = # next do. 0
 elseif. 1 do. next__last removeFromList__next y end.
 )
 
-getSize =: monad define
+getSize=: monad define
 if. 0 = # next do. 1
 else. 1 + getSize__next ''
 end.
@@ -233,11 +233,11 @@ else.
 end.
 )
 
-reset =: monad define
-isSet =: 0
-key=: ''   	
-value=: '' 	
-next=: ''  
+reset=: monad define
+isSet=: 0
+key=: ''
+value=: ''
+next=: ''
 rawKey=: ''
 )
 
