@@ -40,10 +40,8 @@ NB. PACK AN OBJECT
 NB. =========================================================
 packObj=: monad define
 result=. ''
-smoutput y
 dt =. GetType y
-if. dt = <'HashMap' do.
-smoutput 'packing map'
+if. dt -: 'HashMap' do.
 packMap y
 else.
 boxy=. < datatype y
@@ -183,15 +181,17 @@ NB. probably pointless
 NB. =========================================================
 packNil=: nil
 
-
+NB. =========================================================
+NB. PACK MAP
+NB. packs map objects. (Map reference datatypes MUST be symbols
+NB. =========================================================
 packMap =: monad define
-hMap =. y NB. hashmap
+hMap =.5 s: y NB. hashmap
 size =. size__hMap ''
 prefix =. '8', hfd size
-smoutput prefix
+NB. packUp will pack the key and the value of kvp pair and append them.
 packUp =. (packObj, (packObj@:get__hMap@:":))@:(>@:(0&{))@:,@:>
 l =. enumerate__hMap ''
-smoutput l
 a =.(' '-.~,(packUp"0) l)
 prefix , a
 
@@ -220,8 +220,6 @@ unpackNil=: 0 NB. no null in J. TODO change this to more suitable type.
 NB. =========================================================
 NB. UNPACK INTEGERS
 NB. =========================================================
-
-NB. todo - finish for all integer lengths int/uint
 unpackInteger=: monad define
 data=. y
 len=. #y
@@ -453,10 +451,7 @@ while. len > 0 do.
   box=. read data;k
   if. isKey do.
     key =. (>0{ box )
-    smoutput key
   else.value =. 0{ box 
-smoutput value
-smoutput key;<value
     set__hMap key;<value
   end.
   data=. >1{box
@@ -529,7 +524,7 @@ insertSpaces=: ,@:(' '&(,~"1))@:(,&2@:(-:@:#) $ ])
 
 NB. Gets the type (datatype)
 GetType =: 3 : 0
-try.
-0{ , 18!:2 y
-catch. datatype y end.
+dt =. datatype y
+if. dt -: 'symbol' do. 'HashMap'
+else. dt end.
 )

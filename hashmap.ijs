@@ -1,13 +1,16 @@
 NB. purpose built hashmap / dictionary class
 NB. for msgpack.
 NB. reference see: http://www.jsoftware.com/jwiki/Essays/DataStructures#Associative_Array
-
+NB. Dictionary references are represented by symbols (s:) to solve
+NB. any ambiguity between object references and boxed literals.
+NB. This means that using symbols is not allowed for any values in the dictionary
+NB. other than HashMap object references.
 
 
 
 NB. operators
-(XOR=: 22 b.),(OR=: 23 b.),(AND=: 17 b.),(NOT=: 20 b.)
-SHIFT=: 33 b.
+(XOR=: 22 b.),(OR=: 23 b.),(AND=: 17 b.),(NOT=: 20 b.),(SHIFT=: 33 b.)
+
 
 
 NB. ============ HASHMAP CLASS ==============
@@ -84,8 +87,6 @@ if. 0 = isSet__ent do.
   entries=: y x} entries
 NB. if not empty, but raw keys are identical, refill.
 elseif. rawKey__ent -: rawKey__newent do.
-  smoutput rawKey__ent
-  smoutput rawKey__newent
   entries=: newent x} entries
 NB. else append to the last in linkedlist
 elseif. 1 do.
@@ -119,7 +120,6 @@ NB. check if raw keys match...
 NB. linked list is 0 so remove this item.
     if. 0 = # next__ent do.
       reset__ent ''
-      smoutput isSet__ent
       1
 NB. linked list has elements so put
 NB. next element in bucket (becomes head of list).
@@ -175,7 +175,7 @@ isSet=: 0 	NB. flag for instantiated or not.
 create=: 3 : 0
 rawKey=: >0{y
 key=: >1{y
-value=: 2{y
+value=: >2{y
 isSet=: 1
 )
 
