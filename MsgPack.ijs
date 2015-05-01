@@ -40,6 +40,10 @@ NB. PACK AN OBJECT
 NB. =========================================================
 packObj=: monad define
 result=. ''
+dt =. GetType y
+if. dt = <'HashMap' do.
+packMap y
+else.
 boxy=. < datatype y
 len=. # y
 shape=. $ y
@@ -54,6 +58,7 @@ elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packInteger y
 elseif. boxy = < 'floating' do. result=. packFloat y
 end.
 result
+end.
 )
 
 
@@ -146,7 +151,7 @@ NB. PACK BOX
 NB. =========================================================
 packBox=: monad define
 len=. # y
-if. len = 1 do. packObj > y
+if. len = 1 do. packObj ,> y
 else.
   if.len < 16 do.
     pre=. hfd2 144 OR len
@@ -179,8 +184,14 @@ packNil=: nil
 
 packMap =: monad define
 hMap =. y NB. hashmap
-size =. size__hMap
-prefix =. '8', (2 hfd_stretch size)
+size =. size__hMap ''
+prefix =: '8', hfd size
+smoutput prefix
+packUp =. (packObj@:(0&{) , packObj@:(}.))@:>"0
+l =. enumerate__hMap ''
+
+a =.(' '-.~,packUp l)
+prefix , a
 
 )
 
@@ -264,7 +275,10 @@ elseif. 1 do.
   len=. 2
 end.
 result=. a.{~ dfh byteShape len }. y
-'"',result,'"'
+result
+NB. ====== TOD0 ===== 
+NB. for json, need to enclose stirngs in double quotes
+NB. =================
 )
 NB. =========================================================
 NB. UNPACK BINARY
@@ -364,19 +378,19 @@ NB. binary
 elseif. type e. bin8;bin16;bin32 do. unpackBin y
 NB. arrays
 elseif. (dfh{.>type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
-  readLenToJSON (strip2 y);len
+  readLen (strip2 y);len
 elseif. type = <array16 do. len=. (dfh 4{.strip2 y)
-  readLenToJSON (4}. strip2 y);len
+  readLen (4}. strip2 y);len
 elseif. type = <array32 do. len=. (dfh 8{.strip2 y)
-  readLenToJSON (8}.strip2 y);len
+  readLen  (8}.strip2 y);len
 NB. Maps
 elseif. (dfh 0{>type) = 8 do. NB. fixed map
   len=. dfh (1{>type)
-  readMapLenToJSON (strip2 y);len
+  readMapLen  (strip2 y);len
 elseif. type =< map16 do. len=. (dfh 4{.strip2 y)
-  readMapLenToJSON (4}. strip2 y);len
+  readMapLen  (4}. strip2 y);len
 elseif. type =< map32 do. len=. (dfh 8{.strip2 y)
-  readMapLenToJSON (8}.strip2 y);len
+  readMapLen  (8}.strip2 y);len
 elseif. 1 do.
   1
 end.
@@ -426,23 +440,28 @@ NB. of some sort. Such a dictionary needs
 NB. implementing first.
 NB. ============= TODO ==============
 readMapLen=: verb define
+hMap =. conew 'HashMap'
+create__hMap ''
 data=. >0{y
 len=. 2 * >1{y NB. two objects , because map.
-reslt=. '{'
 isKey=. 1 NB. key or value
+key =. ''
 while. len > 0 do.
   k=. length data
   box=. read data;k
   if. isKey do.
-    reslt=. reslt, (":>0{ box ), ':'
-  else. reslt=. reslt,(":>0{ box )
-    if. len > 1 do. reslt=. reslt,','end.
+    key =. (>0{ box )
+    smoutput key
+  else.value =. 0{ box 
+smoutput value
+smoutput key;<value
+    set__hMap key;<value
   end.
   data=. >1{box
   len=. len - 1
   isKey=. 2 | (isKey + 1)
 end.
-reslt,'}'
+hMap
 )
 
 NB. see: readMapLen.
@@ -505,3 +524,10 @@ totalLen
 
 NB. ============ SOME UTILITIES =========
 insertSpaces=: ,@:(' '&(,~"1))@:(,&2@:(-:@:#) $ ])
+
+NB. Gets the type (datatype)
+GetType =: 3 : 0
+try.
+0{ 18!:2 y
+catch. datatype y end.
+)
