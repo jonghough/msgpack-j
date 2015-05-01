@@ -40,8 +40,10 @@ NB. PACK AN OBJECT
 NB. =========================================================
 packObj=: monad define
 result=. ''
+smoutput y
 dt =. GetType y
 if. dt = <'HashMap' do.
+smoutput 'packing map'
 packMap y
 else.
 boxy=. < datatype y
@@ -185,12 +187,12 @@ packNil=: nil
 packMap =: monad define
 hMap =. y NB. hashmap
 size =. size__hMap ''
-prefix =: '8', hfd size
+prefix =. '8', hfd size
 smoutput prefix
-packUp =. (packObj@:(0&{) , packObj@:(}.))@:>"0
+packUp =. (packObj, (packObj@:get__hMap@:":))@:(>@:(0&{))@:,@:>
 l =. enumerate__hMap ''
-
-a =.(' '-.~,packUp l)
+smoutput l
+a =.(' '-.~,(packUp"0) l)
 prefix , a
 
 )
@@ -528,6 +530,6 @@ insertSpaces=: ,@:(' '&(,~"1))@:(,&2@:(-:@:#) $ ])
 NB. Gets the type (datatype)
 GetType =: 3 : 0
 try.
-0{ 18!:2 y
+0{ , 18!:2 y
 catch. datatype y end.
 )
