@@ -503,5 +503,3 @@ end.
 totalLen
 )
 
-
-s
