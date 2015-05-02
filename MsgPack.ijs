@@ -1,14 +1,15 @@
 NB. J implementation of MsgPack
 NB. @author Jon Hough
 NB.
+
+require '~user/projects/MsgPack/msgpack-j/utils.ijs'
+
 NB. BYTE PREFIXES - constants
 (nil=: 'c0'),(reserved=: 'c1'),(false=: 'c2'),(true=: 'c3'),(bin8=: 'c4'),(bin16=: 'c5'),(bin32=: 'c6'),(ext8=: 'c7'),(ext16=: 'c8')
 (ext32=: 'c9'),(float32=: 'ca'),(float64=: 'cb'),(uint8=: 'cc'),(uint16=: 'cd'),(uint32=: 'ce'),(uint64=: 'cf'),(int8=: 'd0'),(int16=: 'd1')
 (int32=: 'd2'),(int64=: 'd3'),(fixext1=: 'd4'),(fixext2=: 'd5'),(fixext4=: 'd6'),(fixext8=: 'd7'),(fixext16=: 'd8'),(str8=: 'd9'),(str16=: 'da')
 (str32=: 'db'),(array16=: 'dc'),(array32=: 'dd'),(map16=: 'de'),(map32=: 'df')
 
-NB. operators
-(XOR=: 22 b.),(OR=: 23 b.),(AND=: 17 b.),(NOT=: 20 b.)
 
 isBoxed=: 0&<@:L.
 
@@ -197,7 +198,7 @@ prefix , a
 
 )
 
-NB. Pack -> Int array, char.
+NB. Pack bytes
 pack=: (a.&({~))@:dfh@:byteShape@:packObj
 
 NB. =========================================================
@@ -206,7 +207,7 @@ NB. Unpack MsgPack datatypes to J datatypes
 NB. =========================================================
 isInRange=: ((0&{ @ [) < ]) *. ((1&{ @ [) > ])
 
-NB. Unpack... not finished.
+NB. Unpack bytes
 unpack=: unpackObj@:,@:hfd@:(a.&i.)
 
 
@@ -245,7 +246,7 @@ NB. Take the first two items
 take2=: 2&{.
 NB. Strip the front 2 chars from the front of the array
 strip2=: 2&}.
-NB. Reshapes the hexstirng into a 4x2 array of hex stirngs,
+NB. Reshapes the hexstring into a 4x2 array of hex strings,
 NB. representing bytes.
 byteShape=: 2&(,~)@:(2&(%~))@:# $ ]
 NB. Gets a J float from the hex string
@@ -277,9 +278,10 @@ end.
 result=. a.{~ dfh byteShape len }. y
 result
 NB. ====== TOD0 ===== 
-NB. for json, need to enclose stirngs in double quotes
+NB. for json, need to enclose strings in double quotes
 NB. =================
 )
+
 NB. =========================================================
 NB. UNPACK BINARY
 NB. =========================================================
@@ -298,19 +300,6 @@ if. (2<{.y) e. (map16; map32) do.
   len=. dfh 4{. strip2 y
   result=. < unpackObj len {. strip2 y
 end.
-result
-)
-
-NB.fixmap stores a map whose length is upto 15 elements
-NB.+--------+~~~~~~~~~~~~~~~~~+
-NB.|1000XXXX| N*2 objects |
-NB.+--------+~~~~~~~~~~~~~~~~~+
-unpackFixMap=: monad define
-
-)
-
-getArrayLen=: monad define
-result=. length y
 result
 )
 
@@ -434,11 +423,8 @@ end.
 reslt,']'
 )
 
-NB. ============= TODO ==============
-NB. This verb will output a dictionary
-NB. of some sort. Such a dictionary needs
-NB. implementing first.
-NB. ============= TODO ==============
+
+
 readMapLen=: verb define
 hMap =. conew 'HashMap'
 create__hMap ''
@@ -518,13 +504,4 @@ totalLen
 )
 
 
-
-NB. ============ SOME UTILITIES =========
-insertSpaces=: ,@:(' '&(,~"1))@:(,&2@:(-:@:#) $ ])
-
-NB. Gets the type (datatype)
-GetType =: 3 : 0
-dt =. datatype y
-if. dt -: 'symbol' do. 'HashMap'
-else. dt end.
-)
+s

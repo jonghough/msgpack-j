@@ -6,12 +6,7 @@ NB. any ambiguity between object references and boxed literals.
 NB. This means that using symbols is not allowed for any values in the dictionary
 NB. other than HashMap object references.
 
-
-
-NB. operators
-(XOR=: 22 b.),(OR=: 23 b.),(AND=: 17 b.),(NOT=: 20 b.),(SHIFT=: 33 b.)
-
-
+require '~user/projects/MsgPack/msgpack-j/utils.ijs'
 
 NB. ============ HASHMAP CLASS ==============
 
@@ -166,12 +161,13 @@ NB. =============== ENTRY CLASS =============
 NB. Entry class contains key value pair and "pointer"
 NB. to potential next entry in LinkedList fashion.
 coclass 'Entry'
-key=: '' 	NB. The key (hashed)
+key=: '' 		NB. The key (hashed)
 value=: '' 	NB. The value
-next=: '' 	NB. The next value, if any
+next=: '' 		NB. The next value, if any
 rawKey=: '' 	NB. The raw, unhashed, key
-isSet=: 0 	NB. flag for instantiated or not.
+isSet=: 0 		NB. flag for instantiated or not.
 
+NB. Instantiate the Entry object.
 create=: 3 : 0
 rawKey=: >0{y
 key=: >1{y
@@ -242,15 +238,4 @@ rawKey=: ''
 )
 
 destroy=: codestroy
-
-
-
-
-
-
-F=: conew 'HashMap'
-create__F ''
-set__F 'key1';'value1'
-list=: ('key'&,@:([: ": ]))"_ 0 ( i.45)
-listX=: list;"1 1 ('something',"_ 1 list)
 
