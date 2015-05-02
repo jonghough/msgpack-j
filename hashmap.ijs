@@ -175,6 +175,8 @@ value=: >2{y
 isSet=: 1
 )
 
+NB. Returns 1 if this Entry contains the key
+NB. value pair for the given key.
 contains=: monad define
 rk=: y
 if. isSet = 0 do. 0
@@ -186,6 +188,9 @@ elseif. 1 do.
 end.
 )
 
+NB. Returns this key value pair and the
+NB. list of key value pairs of the tail of the 
+NB. linked list.
 enumerate=: monad define
 if. 0 = # next do.
   <(rawKey; value)
@@ -194,6 +199,8 @@ else.
 end.
 )
 
+NB. Tests if the key matches and if so returns the value,
+NB. else sends key to the next item in linkedlist.
 matches=: monad define
 rk=. y
 if. isSet = 0 do. 'ERROR'
@@ -204,12 +211,7 @@ elseif. 1 do.
 end.
 )
 
-GetType =: 3 : 0
-dt =. datatype y
-if. dt -: 'symbol' do. 'HashMap'
-else. dt end.
-)
-
+NB. Removes this item from the current linked list.
 removeFromList=: dyad define
 rk=. y NB. a raw key
 last=. x NB. the last entry in this list
@@ -220,6 +222,7 @@ if. rk -: rawKey do.
 elseif. 0 = # next do. 0
 elseif. 1 do. next__last removeFromList__next y end.
 )
+
 
 getSize=: monad define
 if. 0 = # next do. 1
@@ -235,6 +238,7 @@ else.
 end.
 )
 
+NB. Resets this item.
 reset=: monad define
 isSet=: 0
 key=: ''
