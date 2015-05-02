@@ -204,6 +204,12 @@ elseif. 1 do.
 end.
 )
 
+GetType =: 3 : 0
+dt =. datatype y
+if. dt -: 'symbol' do. 'HashMap'
+else. dt end.
+)
+
 removeFromList=: dyad define
 rk=. y NB. a raw key
 last=. x NB. the last entry in this list

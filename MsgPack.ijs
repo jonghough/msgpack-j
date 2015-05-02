@@ -438,13 +438,17 @@ while. len > 0 do.
   if. isKey do.
     key =. (>0{ box )
   else.value =. 0{ box 
-    set__hMap key;<value
+    if. 'HashMap' -: GetType value do.
+        set__hMap key;value
+    else.
+        set__hMap key;<value
+    end.
   end.
   data=. >1{box
   len=. len - 1
   isKey=. 2 | (isKey + 1)
 end.
-hMap
+s: hMap
 )
 
 NB. see: readMapLen.
