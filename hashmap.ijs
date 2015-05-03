@@ -41,7 +41,7 @@ NB. Should be boxed pair (key;value)
 set=: monad define
 rk=. >0{y NB. raw key
 hk=. hash rk NB. hashed key
-val=. >1{y NB. value
+val=. ,>1}.y NB. value
 i=. conew 'Entry'
 create__i rk;hk;val
 hk append i
@@ -155,6 +155,9 @@ MAX | h
 
 destroy=: codestroy
 
+NB. Gets a hashmap reference from the value
+NB. returned from the get method.
+getHashmapFromValue =: (''&$)@:,@:(5&s:)@:>
 
 NB. =============== ENTRY CLASS =============
 
@@ -171,7 +174,7 @@ NB. Instantiate the Entry object.
 create=: 3 : 0
 rawKey=: >0{y
 key=: >1{y
-value=: >2{y
+value=: 2}.y NB. strip the first two
 isSet=: 1
 )
 
@@ -203,6 +206,7 @@ NB. Tests if the key matches and if so returns the value,
 NB. else sends key to the next item in linkedlist.
 matches=: monad define
 rk=. y
+rk =. ($rawKey) $ rk
 if. isSet = 0 do. 'ERROR'
 elseif. (rawKey) -: (rk) do.
   value

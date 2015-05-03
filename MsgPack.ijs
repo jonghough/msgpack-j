@@ -71,7 +71,7 @@ packInteger=: monad define
 
 if. y < 0 do.
   if. y > _32 do. NB. 5 bits 111YYYYY form
-    1 hfd_stretch y
+    1 hfd_stretch"0 0 y
   elseif. y > _128 do.
     int8, (1 hfd_stretch y)
   elseif. y > (_1*2^16) do.
@@ -87,7 +87,7 @@ NB. NOTHING
 elseif. 1 do.
   if. y=0 do. '00'
   elseif. y < 128 do.
-    hfd2 y
+    hfd2"0 y
   elseif. y < 256 do.
     uint8, (1 hfd_stretch y)
   elseif. y < (2^16) do.
