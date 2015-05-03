@@ -187,7 +187,12 @@ NB. PACK MAP
 NB. packs map objects. (Map reference datatypes MUST be symbols
 NB. =========================================================
 packMap =: monad define
-hMap =.5 s: y NB. hashmap
+hMap =. 5 s: y NB. hashmap
+NB. following two lines are a workaround for what may be a bug
+NB. with J. Otherwise occassionally get rank error
+NB. with size__hMap ''
+str =. ,>hMap
+hMap =. <str
 size =. size__hMap ''
 prefix =. '8', hfd size
 NB. packUp will pack the key and the value of kvp pair and append them.
