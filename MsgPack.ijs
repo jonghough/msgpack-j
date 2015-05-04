@@ -152,7 +152,7 @@ NB. PACK BOX
 NB. =========================================================
 packBox=: monad define
 len=. # y
-if. len = 1 do. packObj ,> y
+if. len = 1 do. packObj > y
 else.
   if.len < 16 do.
     pre=. hfd2 144 OR len

@@ -41,7 +41,7 @@ NB. Should be boxed pair (key;value)
 set=: monad define
 rk=. >0{y NB. raw key
 hk=. hash rk NB. hashed key
-val=. ,>1}.y NB. value
+val=. >1{y NB. value
 i=. conew 'Entry'
 create__i rk;hk;val
 hk append i
