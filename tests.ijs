@@ -43,6 +43,8 @@ packObj compare ((3;(<'hi';6.3));'920392a26869cb4019333333333333') NB. equivalen
 NB. MULTIDIMENSIONAL ARRAYS
 NB. 2x2x2 array of floats
 packObj compare ((2 2 2 $ 2.1 4.3 6.7 8.888 1.1 0.9 1.001 3.14); '929292cb4000cccccccccccdcb401133333333333392cb401acccccccccccdcb4021c6a7ef9db22d9292cb3ff199999999999acb3feccccccccccccd92cb3ff004189374bc6acb40091eb851eb851f')
+packObj compare ((<2 3 $ i.6); '929300010293030405')
+packObj compare ((<2 3 $ <"0'abcdef');'9293a161a162a16393a164a165a166')
 NB. STRINGS
 packObj compare ('!>#$&+*'; 'a7213e2324262b2a')
 packObj compare ('The quick brown fox...';'b654686520717569636b2062726f776e20666f782e2e2e')
@@ -50,6 +52,20 @@ packObj compare ('notation as a tool of thought!'; 'be6e6f746174696f6e2061732061
 NB. skip below test. It adds trailing elipsis. Needs fixing
 NB. packObj testAdverb ( 'Lorem ipsum dolor sit amet, omnis quaeque vituperatoribus has te, atqui congue expetendis eu pri, denique liberavisse cu mel. Eripuit minimum an sit, at graece semper atomorum nam, ei disputando eloquentiam definitiones sit. Oratio latine comprehensam an quo. Ei usu partem putent equidem, an labitur saperet vivendum mea.';'da01424c6f72656d20697073756d20646f6c6f722073697420616d65742c206f6d6e69732071756165717565207669747570657261746f7269627573206861732074652c20617471756920636f6e677565206578706574656e646973206575207072692c2064656e69717565206c69626572617669737365206375206d656c2e')
 
+
+
+
+NB. DICTIONARIES. NOTE: testing packed bytes using other implementations may have
+NB. a different byte ordering due to differeing orders in hashmaps in different
+NB. languages.
+NB. 1. Test 3 key value pairs.
+NB. JSON equivalent: {"key1":"value1","Key2":"value2","KEY3": "VALUE3"}
+testQ =: '' conew 'HashMap'
+set__testQ 'key1'; 'value1'
+set__testQ 'Key2'; 'value2'
+set__testQ 'KEY3'; 'VALUE3'
+symTestQ =: s: testQ
+packObj compare (symTestQ ; '83a46b657931a676616c756531a44b455933a656414c554533a44b657932a676616c756532')
 NB. UNPACK tests
 unpackObj compare ('02';2)
 unpackObj compare ( 'ce00347457';3437655)
