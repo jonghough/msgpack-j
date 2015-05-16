@@ -48,7 +48,7 @@ else.
 boxy=. < datatype y
 len=. # y
 shape=. $ y
-if. isBoxed y do. result=. packBox y
+if. isBoxed y do. result=. packBoxJSON y
 elseif. boxy = < 'literal' do. result=. packStringJSON y
 elseif. (# shape) > 1 do.
   prefix=. hfd2 144 OR {. shape
@@ -183,7 +183,14 @@ else.
 end.
 )
 
-
+packBoxJSON=: monad define
+len=. # y
+if. len = 1 do. packObj > y
+else.
+ '[',(insert/ ( packBoxJSON"0 y)),']'
+ 
+end.
+)
 
 NB. =========================================================
 NB. PACK BIN
