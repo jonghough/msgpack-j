@@ -41,24 +41,24 @@ NB. PACK AN OBJECT
 NB. =========================================================
 packObj=: monad define
 result=. ''
-dt =. GetType y
+dt=. GetType y
 if. dt -: 'HashMap' do.
-packMapJSON y
+  packMapJSON y
 else.
-boxy=. < datatype y
-len=. # y
-shape=. $ y
-if. isBoxed y do. result=. packBoxJSON y
-elseif. boxy = < 'literal' do. result=. packStringJSON y
-elseif. (# shape) > 1 do.
-  prefix=. hfd2 144 OR {. shape
-  ord=. 0&>.<:#shape
-  result=. ' '-.~,"_  (packObj"ord ) y NB. TODO need to add prefix to show the length of the overall array.
-elseif. len > 1 do. result=. ' '-.~,"_ packArrayJSON y
-elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packIntegerJSON y
-elseif. boxy = < 'floating' do. result=. packFloatJSON y
-end.
-result
+  boxy=. < datatype y
+  len=. # y
+  shape=. $ y
+  if. isBoxed y do. result=. packBoxJSON y
+  elseif. boxy = < 'literal' do. result=. packStringJSON y
+  elseif. (# shape) > 1 do.
+    prefix=. hfd2 144 OR {. shape
+    ord=. 0&>.<:#shape
+    result=. ' '-.~,"_ (packObj"ord ) y NB. TODO need to add prefix to show the length of the overall array.
+  elseif. len > 1 do. result=. ' '-.~,"_ packArrayJSON y
+  elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packIntegerJSON y
+  elseif. boxy = < 'floating' do. result=. packFloatJSON y
+  end.
+  result
 end.
 )
 
@@ -102,7 +102,7 @@ elseif. 1 do.
 end.
 )
 
-packIntegerJSON =: ('-'&,@":@-)`":@.(0&<) 
+packIntegerJSON=: ('-'&,@":@-)`":@.(0&<)
 
 
 NB. =========================================================
@@ -115,7 +115,7 @@ elseif. 1 do. float64, convertFloat y
 end.
 )
 
-packFloatJSON =: ('-'&,@":@-)`":@.(0&<) 
+packFloatJSON=: ('-'&,@":@-)`":@.(0&<)
 
 NB. =========================================================
 NB. PACK STRINGS
@@ -138,7 +138,7 @@ elseif. 1 do.
 end.
 )
 
-packStringJSON =: ('"'&wrapWith)@:,@:":
+packStringJSON=: ('"'&wrapWith)@:,@:":
 
 NB. =========================================================
 NB. PACK ARRAYS
@@ -154,13 +154,13 @@ elseif. len < 2^16 do.
 end.
 )
 
-packArrayJSON =: monad define
-len =. # y NB. pack the items
-res =. '['
+packArrayJSON=: monad define
+len=. # y NB. pack the items
+res=. '['
 for_j. i. len do.
- if. j = 0 do. res =. res,packObj j{ y else.
- res =. res,',',packObj j{y
-end.
+  if. j = 0 do. res=. res,packObj j{ y else.
+    res=. res,',',packObj j{y
+  end.
 end.
 res,']'
 )
@@ -183,12 +183,18 @@ else.
 end.
 )
 
+
 packBoxJSON=: monad define
 len=. # y
 if. len = 1 do. packObj > y
 else.
- '[',(insert/ ( packBoxJSON"0 y)),']'
- 
+  res=. '['
+  for_j. i. len do.
+    if. j = 0 do. res=. res,packBoxJSON j{y
+    else. res=. res , ',', packBoxJSON j{ y
+    end.
+  end.
+  res,']'
 end.
 )
 
@@ -213,43 +219,43 @@ NB. =========================================================
 NB. PACK MAP
 NB. packs map objects. (Map reference datatypes MUST be symbols
 NB. =========================================================
-packMap =: monad define
-hMap =. 5 s: y NB. hashmap
+packMap=: monad define
+hMap=. 5 s: y NB. hashmap
 NB. following two lines are a workaround for what may be a bug
 NB. with J. Otherwise occassionally get rank error
 NB. with size__hMap ''
-str =. ,>hMap
-hMap =. <str
-size =. size__hMap ''
-prefix =. '8', hfd size
+str=. ,>hMap
+hMap=. <str
+size=. size__hMap ''
+prefix=. '8', hfd size
 NB. packUp will pack the key and the value of kvp pair and append them.
-packUp =. (packObj, (packObj@:get__hMap@:":))@:(>@:(0&{))@:,@:>
-l =. enumerate__hMap ''
-a =.(' '-.~,(packUp"0) l)
+packUp=. (packObj, (packObj@:get__hMap@:":))@:(>@:(0&{))@:,@:>
+l=. enumerate__hMap ''
+a=. (' '-.~,(packUp"0) l)
 prefix , a
 
 )
 
-packMapJSON =: monad define
-hMap =. 5 s: y NB. hashmap
+packMapJSON=: monad define
+hMap=. 5 s: y NB. hashmap
 NB. following two lines are a workaround for what may be a bug
 NB. with J. Otherwise occassionally get rank error
 NB. with size__hMap ''
-str =. ,>hMap
-hMap =. <str
-size =. size__hMap ''
-prefix =. '{'
-res =. ''
-l =. enumerate__hMap ''
+str=. ,>hMap
+hMap=. <str
+size=. size__hMap ''
+prefix=. '{'
+res=. ''
+l=. enumerate__hMap ''
 
 NB. packUp will pack the key and the value of kvp pair and append them.
 for_j. i. size do.
-open =. (>@:(0&{))@:,@:> j{ l
-if. j = 0 do.
-res =. res , (packObj open), ':' , (,@:packObj@:get__hMap open)
-else.
-res =. res , ',' , (packObj open), ':' , (packObj@:get__hMap open)
-end.
+  open=. (>@:(0&{))@:,@:> j{ l
+  if. j = 0 do.
+    res=. res , (packObj open), ':' , (,@:packObj@:get__hMap open)
+  else.
+    res=. res , ',' , (packObj open), ':' , (packObj@:get__hMap open)
+  end.
 end.
 '{' , res, '}'
 )
@@ -333,9 +339,9 @@ elseif. 1 do.
 end.
 result=. a.{~ dfh byteShape len }. y
 result
-NB. ====== TOD0 ===== 
+NB. ====== TOD0 =====
 NB. for json, need to enclose strings in double quotes
-NB. =================
+NB. =========================================================
 )
 
 NB. =========================================================
@@ -427,15 +433,15 @@ elseif. (dfh{.>type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
 elseif. type = <array16 do. len=. (dfh 4{.strip2 y)
   readLenToJSON (4}. strip2 y);len
 elseif. type = <array32 do. len=. (dfh 8{.strip2 y)
-  readLenToJSON  (8}.strip2 y);len
+  readLenToJSON (8}.strip2 y);len
 NB. Maps
 elseif. (dfh 0{>type) = 8 do. NB. fixed map
   len=. dfh (1{>type)
-  readMapLenToJSON  (strip2 y);len
+  readMapLenToJSON (strip2 y);len
 elseif. type =< map16 do. len=. (dfh 4{.strip2 y)
-  readMapLenToJSON  (4}. strip2 y);len
+  readMapLenToJSON (4}. strip2 y);len
 elseif. type =< map32 do. len=. (dfh 8{.strip2 y)
-  readMapLenToJSON  (8}.strip2 y);len
+  readMapLenToJSON (8}.strip2 y);len
 elseif. 1 do.
   1
 end.
@@ -482,22 +488,22 @@ reslt,']'
 
 
 readMapLen=: verb define
-hMap =. conew 'HashMap'
+hMap=. conew 'HashMap'
 create__hMap ''
 data=. >0{y
 len=. 2 * >1{y NB. two objects , because map.
 isKey=. 1 NB. key or value
-key =. ''
+key=. ''
 while. len > 0 do.
   k=. length data
   box=. read data;k
   if. isKey do.
-    key =. (>0{ box )
-  else.value =. 0{ box 
+    key=. (>0{ box )
+  else.value=. 0{ box
     if. 'HashMap' -: GetType value do.
-        set__hMap key;value
+      set__hMap key;value
     else.
-        set__hMap key;<value
+      set__hMap key;<value
     end.
   end.
   data=. >1{box
