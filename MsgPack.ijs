@@ -372,19 +372,19 @@ NB. binary
 elseif. type e. bin8;bin16;bin32 do. unpackBin y
 NB. arrays
 elseif. (dfh{.>type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
-  readLen (strip2 y);len
+  readLenToJSON (strip2 y);len
 elseif. type = <array16 do. len=. (dfh 4{.strip2 y)
-  readLen (4}. strip2 y);len
+  readLenToJSON (4}. strip2 y);len
 elseif. type = <array32 do. len=. (dfh 8{.strip2 y)
-  readLen  (8}.strip2 y);len
+  readLenToJSON  (8}.strip2 y);len
 NB. Maps
 elseif. (dfh 0{>type) = 8 do. NB. fixed map
   len=. dfh (1{>type)
-  readMapLen  (strip2 y);len
+  readMapLenToJSON  (strip2 y);len
 elseif. type =< map16 do. len=. (dfh 4{.strip2 y)
-  readMapLen  (4}. strip2 y);len
+  readMapLenToJSON  (4}. strip2 y);len
 elseif. type =< map32 do. len=. (dfh 8{.strip2 y)
-  readMapLen  (8}.strip2 y);len
+  readMapLenToJSON  (8}.strip2 y);len
 elseif. 1 do.
   1
 end.

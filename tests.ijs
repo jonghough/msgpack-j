@@ -8,6 +8,7 @@ compare =: 2 : '((u&.>)0{n) = (1{n)'
 match =: 2 : '((u&.>)0{n) -: (((_1&*@<: @#) {. ])n)'
 
 NB. INTEGERS TESTS
+packObj compare ( 0; '00')
 packObj compare ( 2; '02')
 packObj compare ( 34; '22')
 packObj compare ( 128; 'cc80')
