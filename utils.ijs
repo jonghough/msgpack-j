@@ -20,3 +20,6 @@ else. dt end.
 
 NB. bit operators
 (XOR=: 22 b.),(OR=: 23 b.),(AND=: 17 b.),(NOT=: 20 b.),(SHIFT=: 33 b.)
+
+NB. for JSON functions
+wrapWith =: [,~ ([,])

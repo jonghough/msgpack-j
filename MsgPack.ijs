@@ -43,20 +43,20 @@ packObj=: monad define
 result=. ''
 dt =. GetType y
 if. dt -: 'HashMap' do.
-packMap y
+packMapJSON y
 else.
 boxy=. < datatype y
 len=. # y
 shape=. $ y
 if. isBoxed y do. result=. packBox y
-elseif. boxy = < 'literal' do. result=. packString y
+elseif. boxy = < 'literal' do. result=. packStringJSON y
 elseif. (# shape) > 1 do.
   prefix=. hfd2 144 OR {. shape
   ord=. 0&>.<:#shape
-  result=. ' '-.~,"_ prefix, (packObj"ord ) y NB. TODO need to add prefix to show the length of the overall array.
-elseif. len > 1 do. result=. ' '-.~,"_ packArray y
-elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packInteger y
-elseif. boxy = < 'floating' do. result=. packFloat y
+  result=. ' '-.~,"_  (packObj"ord ) y NB. TODO need to add prefix to show the length of the overall array.
+elseif. len > 1 do. result=. ' '-.~,"_ packArrayJSON y
+elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packIntegerJSON y
+elseif. boxy = < 'floating' do. result=. packFloatJSON y
 end.
 result
 end.
@@ -102,6 +102,9 @@ elseif. 1 do.
 end.
 )
 
+packIntegerJSON =: ('-'&,@":@-)`":@.(0&<) 
+
+
 NB. =========================================================
 NB. PACK FLOATS
 NB. =========================================================
@@ -111,6 +114,8 @@ if. (=<.) y do. packInteger y NB. if can be cast to integer then pack as an inte
 elseif. 1 do. float64, convertFloat y
 end.
 )
+
+packFloatJSON =: ('-'&,@":@-)`":@.(0&<) 
 
 NB. =========================================================
 NB. PACK STRINGS
@@ -133,6 +138,8 @@ elseif. 1 do.
 end.
 )
 
+packStringJSON =: ('"'&wrapWith)@:,@:":
+
 NB. =========================================================
 NB. PACK ARRAYS
 NB. =========================================================
@@ -145,6 +152,17 @@ if.len < 16 do.
 elseif. len < 2^16 do.
   array16 , (2 hfd_stretch len), (,hexArr)
 end.
+)
+
+packArrayJSON =: monad define
+len =. # y NB. pack the items
+res =. '['
+for_j. i. len do.
+ if. j = 0 do. res =. res,packObj j{ y else.
+ res =. res,',',packObj j{y
+end.
+end.
+res,']'
 )
 
 NB. =========================================================
@@ -164,6 +182,8 @@ else.
   end.
 end.
 )
+
+
 
 NB. =========================================================
 NB. PACK BIN
@@ -201,6 +221,33 @@ l =. enumerate__hMap ''
 a =.(' '-.~,(packUp"0) l)
 prefix , a
 
+)
+
+packMapJSON =: monad define
+hMap =. 5 s: y NB. hashmap
+NB. following two lines are a workaround for what may be a bug
+NB. with J. Otherwise occassionally get rank error
+NB. with size__hMap ''
+str =. ,>hMap
+hMap =. <str
+size =. size__hMap ''
+prefix =. '{'
+res =. ''
+l =. enumerate__hMap ''
+
+insert =. [,(','&,@:])
+NB. packUp will pack the key and the value of kvp pair and append them.
+for_j. i. size do.
+open =. (>@:(0&{))@:,@:> j{ l
+smoutput open
+smoutput (packObj@:get__hMap open)
+if. j = 0 do.
+res =. res , (packObj open), ':' , (,@:packObj@:get__hMap open)
+else.
+res =. res , ',' , (packObj open), ':' , (packObj@:get__hMap open)
+end.
+end.
+'{' , res, '}'
 )
 
 NB. Pack bytes
