@@ -235,12 +235,9 @@ prefix =. '{'
 res =. ''
 l =. enumerate__hMap ''
 
-insert =. [,(','&,@:])
 NB. packUp will pack the key and the value of kvp pair and append them.
 for_j. i. size do.
 open =. (>@:(0&{))@:,@:> j{ l
-smoutput open
-smoutput (packObj@:get__hMap open)
 if. j = 0 do.
 res =. res , (packObj open), ':' , (,@:packObj@:get__hMap open)
 else.

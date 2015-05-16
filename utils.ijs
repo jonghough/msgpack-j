@@ -23,3 +23,4 @@ NB. bit operators
 
 NB. for JSON functions
 wrapWith =: [,~ ([,])
+insert =: [,(','&,@:])
