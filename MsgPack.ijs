@@ -10,6 +10,13 @@ NB. BYTE PREFIXES - constants
 (int32=: 'd2'),(int64=: 'd3'),(fixext1=: 'd4'),(fixext2=: 'd5'),(fixext4=: 'd6'),(fixext8=: 'd7'),(fixext16=: 'd8'),(str8=: 'd9'),(str16=: 'da')
 (str32=: 'db'),(array16=: 'dc'),(array32=: 'dd'),(map16=: 'de'),(map32=: 'df')
 
+NB. decimal prefixes -TODO replace above byte prefix strings with these.
+(nilD=:192),(reservedD=:193),(falseD=:194),(trueD=:195),(bin8D=:196)
+(bin16D=:197),(bin32D=:198),(ext8D=:199),(ext16D=:200),(ext32D=:201)
+(float32D=:202),(float64D=:203),(uint8D=:204),(uint16D=:205),(uint32D=:206)
+(uint64D=:207),(int8D=:208),(int16D=:209),(int32D=:210),(int64D=:211)
+(fixext1D=:212),(fixext2D=:213),(fixext4D=:214),(fixext8D=:215),(fixext16D=:216)
+(str8D=:217),(str16D=:218),(str32D=:219),(array16D=:220),(array32D=:221),(map16D=:222),(map32D=:223)
 
 isBoxed=: 0&<@:L.
 
@@ -25,7 +32,7 @@ hfd_stretch=: dyad define
 targetLen=. x
 h=. hfd2 y
 result=. h
-diff=. targetLen - (2 %~ # h)
+diff=. targetLen - (-: # h)
 if. diff > 0 do.
   if. y < 0 do. append=. (2*diff) $ 'f'
   else. append=. (2*diff) $ '0' end.
