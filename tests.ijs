@@ -4,7 +4,7 @@ require '~user/projects/MsgPack/msgpack-j/MsgPack.ijs'
 NB. compare adverb.
 NB. 0{n is the argument, u is the verb to be tested,
 NB. 1{n is the expected result (boxed)
-compare =: 2 : '((u&.>)0{n) = (1{n)'
+compare =: 2 : '((u&.>)0{n) -: (1{n)'
 match =: 2 : '((u&.>)0{n) -: (((_1&*@<: @#) {. ])n)'
 
 NB. INTEGERS TESTS
@@ -73,3 +73,14 @@ unpackObj compare ( 'ce00347457';3437655)
 unpackObj compare ( 'ce00347457';3437655)
 unpackObj compare ( '9acd0100cd0101cd0102cd0103cd0104cd0105cd0106cd0107cd0108cd0109';(<;/ (2^8)+i.10))
 unpackObj compare ( '94050607ab736f6d6520737472696e67'; (<5;6;7;'some string'))
+
+
+
+
+
+NB. JSON packing tests
+packObjJSON compare ((i.5) ; '[0,1,2,3,4]')
+packObjJSON compare (('cat';'dog';'elephant';'monkey';'octopus') ; '["cat","dog","elephant","monkey","octopus"]')
+packObjJSON compare ((3.15 4.23 78.9544 _34.094); '[3.15,4.23,78.9544,-34.094]')
+packObjJSON compare ((2 2 $ i.4); '[[0,1],[2,3]]')
+packObjJSON compare ((s: testQ) ; '{"key1":"value1","KEY3":"VALUE3","Key2":"value2"}')

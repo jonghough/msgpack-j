@@ -48,6 +48,30 @@ NB. PACK AN OBJECT
 NB. =========================================================
 packObj=: monad define
 result=. ''
+dt =. GetType y
+if. dt -: 'HashMap' do.
+packMap y
+else.
+boxy=. < datatype y
+len=. # y
+shape=. $ y
+if. isBoxed y do. result=. packBox y
+elseif. boxy = < 'literal' do. result=. packString y
+elseif. (# shape) > 1 do.
+  prefix=. hfd2 144 OR {. shape
+  ord=. 0&>.<:#shape
+  result=. ' '-.~,"_ prefix, (packObj"ord ) y 
+elseif. len > 1 do. result=. ' '-.~,"_ packArray y
+elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packInteger y
+elseif. boxy = < 'floating' do. result=. packFloat y
+end.
+result
+end.
+)
+
+
+packObjJSON=: monad define
+result=. ''
 dt=. GetType y
 if. dt -: 'HashMap' do.
   packMapJSON y
@@ -60,7 +84,7 @@ else.
   elseif. (# shape) > 1 do.
     prefix=. hfd2 144 OR {. shape
     ord=. 0&>.<:#shape
-    result=. ' '-.~,"_ (packObj"ord ) y NB. TODO need to add prefix to show the length of the overall array.
+    result=. '[',( insert/ (packObjJSON"ord ) y) , ']'
   elseif. len > 1 do. result=. ' '-.~,"_ packArrayJSON y
   elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packIntegerJSON y
   elseif. boxy = < 'floating' do. result=. packFloatJSON y
@@ -109,7 +133,7 @@ elseif. 1 do.
 end.
 )
 
-packIntegerJSON=: ('-'&,@":@-)`":@.(0&<)
+packIntegerJSON=: ":`('-'&,@":@-)@.(0&>)
 
 
 NB. =========================================================
@@ -128,6 +152,7 @@ NB. =========================================================
 NB. PACK STRINGS
 NB. =========================================================
 convertString=: , @: hfd @: (a.&i.)
+NB. pack strings to msgpack
 packString=: monad define
 hexStr=. convertString y
 len=. 2%~ # hexStr
@@ -145,6 +170,7 @@ elseif. 1 do.
 end.
 )
 
+NB. pack strings to JSON
 packStringJSON=: ('"'&wrapWith)@:,@:":
 
 NB. =========================================================
@@ -165,8 +191,8 @@ packArrayJSON=: monad define
 len=. # y NB. pack the items
 res=. '['
 for_j. i. len do.
-  if. j = 0 do. res=. res,packObj j{ y else.
-    res=. res,',',packObj j{y
+  if. j = 0 do. res=. res,packObjJSON j{ y else.
+    res=. res,',',packObjJSON j{y
   end.
 end.
 res,']'
@@ -193,7 +219,7 @@ end.
 
 packBoxJSON=: monad define
 len=. # y
-if. len = 1 do. packObj > y
+if. len = 1 do. packObjJSON > y
 else.
   res=. '['
   for_j. i. len do.
@@ -259,9 +285,9 @@ NB. packUp will pack the key and the value of kvp pair and append them.
 for_j. i. size do.
   open=. (>@:(0&{))@:,@:> j{ l
   if. j = 0 do.
-    res=. res , (packObj open), ':' , (,@:packObj@:get__hMap open)
+    res=. res , (packObjJSON open), ':' , (,@:packObjJSON@:get__hMap open)
   else.
-    res=. res , ',' , (packObj open), ':' , (packObj@:get__hMap open)
+    res=. res , ',' , (packObjJSON open), ':' , (packObjJSON@:get__hMap open)
   end.
 end.
 '{' , res, '}'
@@ -418,6 +444,43 @@ NB. Unpacks a byte string into J objects.
 NB. Any arrays will be unpacked into J boxed arrays
 NB.
 unpackObj=: monad define
+type=. < take2 y
+len=. _1
+if. 0 = # y do.
+elseif.type=<true do. 1
+elseif.type=<false do. 0
+NB. strings
+elseif. ({. > type) e.'ab' do. unpackString y
+elseif. type e. str8;str16;str32 do. unpackString y
+NB. integers
+elseif. (dfh{.>type) < 8 do. unpackInteger y
+elseif. (0{>type) e.'ef' do. unpackInteger y
+elseif. type e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInteger y
+NB. floats
+elseif. type e. float32;float64 do. unpackFloat y
+NB. binary
+elseif. type e. bin8;bin16;bin32 do. unpackBin y
+NB. arrays
+elseif. (dfh{.>type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
+  readLen (strip2 y);len
+elseif. type = <array16 do. len=. (dfh 4{.strip2 y)
+  readLen (4}. strip2 y);len
+elseif. type = <array32 do. len=. (dfh 8{.strip2 y)
+  readLen  (8}.strip2 y);len
+NB. Maps
+elseif. (dfh 0{>type) = 8 do. NB. fixed map
+  len=. dfh (1{>type)
+  readMapLen  (strip2 y);len
+elseif. type =< map16 do. len=. (dfh 4{.strip2 y)
+  readMapLen  (4}. strip2 y);len
+elseif. type =< map32 do. len=. (dfh 8{.strip2 y)
+  readMapLen  (8}.strip2 y);len
+elseif. 1 do.
+  1
+end.
+)
+
+unpackObjJSON=: monad define
 type=. < take2 y
 len=. _1
 if. 0 = # y do.

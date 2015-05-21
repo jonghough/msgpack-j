@@ -17,7 +17,7 @@ entries=: ''
 count=: ''
 MAX=: 20
 
-NB. INitialize and create buckets
+NB. Initialize and create buckets
 create=: monad define
 for_j. i. MAX do.
   entries=: entries, (conew 'Entry')
