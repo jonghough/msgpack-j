@@ -84,3 +84,4 @@ packObjJSON compare (('cat';'dog';'elephant';'monkey';'octopus') ; '["cat","dog"
 packObjJSON compare ((3.15 4.23 78.9544 _34.094); '[3.15,4.23,78.9544,-34.094]')
 packObjJSON compare ((2 2 $ i.4); '[[0,1],[2,3]]')
 packObjJSON compare ((s: testQ) ; '{"key1":"value1","KEY3":"VALUE3","Key2":"value2"}')
+packObjJSON compare (('string';5.34;100) ; '["string",5.34,100]')

@@ -326,14 +326,14 @@ elseif. len = 2 do.
   else.
     dfh data
   end.
-elseif. (<2{.y) = <'cc' do. dfh strip2 data
-elseif. (<2{.y) = <'cd' do. dfh strip2 data
-elseif. (<2{.y) = <'ce' do. dfh strip2 data
-elseif. (<2{.y) = <'cf' do. dfh strip2 data
-elseif. (<2{.y) = <'d0' do. 1 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d1' do. 2 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d2' do. 4 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d3' do. 8 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'cc' do. '' $ dfh strip2 data
+elseif. (<2{.y) = <'cd' do. '' $ dfh strip2 data
+elseif. (<2{.y) = <'ce' do. '' $ dfh strip2 data
+elseif. (<2{.y) = <'cf' do. '' $ dfh strip2 data
+elseif. (<2{.y) = <'d0' do. '' $ 1 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d1' do. '' $ 2 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d2' do. '' $ 4 dfh_unstretch strip2 data
+elseif. (<2{.y) = <'d3' do. '' $ 8 dfh_unstretch strip2 data
 end.
 )
 
@@ -353,8 +353,8 @@ NB. =========================================================
 unpackFloat=: monad define
 result=. ''
 if. (<2{.y) = < float64 do.
-  result=. floatFromHex 16 {. strip2 y
-elseif.1 do. result=. floatFromHex 8 {. strip2 y
+  result=. '' $ floatFromHex 16 {. strip2 y
+elseif.1 do. result=. '' $  floatFromHex 8 {. strip2 y
 end.
 )
 
