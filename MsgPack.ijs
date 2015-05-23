@@ -294,7 +294,9 @@ end.
 )
 
 NB. Pack bytes
-pack=: (a.&({~))@:dfh@:byteShape@:packObj
+NB. dyadic verb. x value 0 or 1. 0 = pack msgpack bytes, 1 = pack json string.
+pack=: packObjJSON@:]`(a.&({~)@:dfh@:byteShape@:packObj@:])@.(0&=@:[)
+
 
 NB. =========================================================
 NB. UNPACKING
@@ -303,8 +305,8 @@ NB. =========================================================
 isInRange=: ((0&{ @ [) < ]) *. ((1&{ @ [) > ])
 
 NB. Unpack bytes
-unpack=: unpackObj@:,@:hfd@:(a.&i.)
-
+NB. dyadic verb. x value 0 or 1. 0 = unpack msgpack bytes, 1 = unpack json string.
+unpack=: unpackObjJSON@:]`(unpackObj@:,@:hfd@:(a.&i.)@:])@.(0&=@:[)
 
 NB. =========================================================
 NB. UNPACK BOOLS
