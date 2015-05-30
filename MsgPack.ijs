@@ -160,11 +160,11 @@ if. len < 32 do. # NB. Up to 32 bytes
   pre=. hfd2 160 OR len
   pre, hexStr
 elseif. len < 2^8 do.
-  str8 , (1 hfd_stretch len), hexStr
+  str8 , (2 hfd_stretch len), hexStr
 elseif. len < 2^16 do.
-  str16 , (2 hfd_stretch len), hexStr
+  str16 , (4 hfd_stretch len), hexStr
 elseif. len < 2^32 do.
-  str32 , (4 hfd_stretch len), hexStr
+  str32 , (8 hfd_stretch len), hexStr
 elseif. 1 do.
   1
 end.
@@ -306,7 +306,7 @@ isInRange=: ((0&{ @ [) < ]) *. ((1&{ @ [) > ])
 
 NB. Unpack bytes
 NB. dyadic verb. x value 0 or 1. 0 = unpack msgpack bytes, 1 = unpack json string.
-unpack=: unpackObjJSON@:]`(unpackObj@:,@:hfd@:(a.&i.)@:])@.(0&=@:[)
+unpack=: unpackObjJSON@:,@:hfd@:(a.&i.)@:]`(unpackObj@:,@:hfd@:(a.&i.)@:])@.(0&=@:[)
 
 NB. =========================================================
 NB. UNPACK BOOLS
@@ -640,4 +640,5 @@ while. len > 0 do.
 end.
 totalLen
 )
+
 
