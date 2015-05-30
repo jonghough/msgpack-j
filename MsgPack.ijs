@@ -328,14 +328,14 @@ elseif. len = 2 do.
   else.
     dfh data
   end.
-elseif. (<2{.y) = <'cc' do. '' $ dfh strip2 data
-elseif. (<2{.y) = <'cd' do. '' $ dfh strip2 data
-elseif. (<2{.y) = <'ce' do. '' $ dfh strip2 data
-elseif. (<2{.y) = <'cf' do. '' $ dfh strip2 data
-elseif. (<2{.y) = <'d0' do. '' $ 1 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d1' do. '' $ 2 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d2' do. '' $ 4 dfh_unstretch strip2 data
-elseif. (<2{.y) = <'d3' do. '' $ 8 dfh_unstretch strip2 data
+elseif. (2{.y) -: 'cc' do. '' $ dfh strip2 data
+elseif. (2{.y) -: 'cd' do. '' $ dfh strip2 data
+elseif. (2{.y) -: 'ce' do. '' $ dfh strip2 data
+elseif. (2{.y) -: 'cf' do. '' $ dfh strip2 data
+elseif. (2{.y) -: 'd0' do. '' $ 1 dfh_unstretch strip2 data
+elseif. (2{.y) -: 'd1' do. '' $ 2 dfh_unstretch strip2 data
+elseif. (2{.y) -: 'd2' do. '' $ 4 dfh_unstretch strip2 data
+elseif. (2{.y) -: 'd3' do. '' $ 8 dfh_unstretch strip2 data
 end.
 )
 
@@ -354,7 +354,7 @@ NB. UNPACK FLOATS
 NB. =========================================================
 unpackFloat=: monad define
 result=. ''
-if. (<2{.y) = < float64 do.
+if. (2{.y) -: float64 do.
   result=. '' $ floatFromHex 16 {. strip2 y
 elseif.1 do. result=. '' $  floatFromHex 8 {. strip2 y
 end.
@@ -364,11 +364,11 @@ NB. =========================================================
 NB. UNPACK STRINGS
 NB. =========================================================
 unpackString=: monad define
-type=. < take2 y
+type=. take2 y
 len=. ''
-if. type = <str8 do. len=. 4
-elseif. type = <str16 do. len=. 6
-elseif. type = <str32 do. len=. 10
+if. type -: str8 do. len=. 4
+elseif. type -: str16 do. len=. 6
+elseif. type -: str32 do. len=. 10
 elseif. 1 do.
   len=. 2
 end.
@@ -383,9 +383,9 @@ NB. =========================================================
 NB. UNPACK BINARY
 NB. =========================================================
 unpackBin=: monad define
-if.(2<{.y) = <bin8 do. (dfh 2{. strip2) y
-elseif. (2<{.y) = <bin16 do. (dfh 4{. strip2 y
-elseif. (2<{.y) = <bin32 do. (dfh 8{. strip2 y
+if.(2{.y) -: bin8 do. (dfh 2{. strip2) y
+elseif. (2{.y) -: bin16 do. (dfh 4{. strip2 y
+elseif. (2{.y) -: bin32 do. (dfh 8{. strip2 y
 end.
 )
 
@@ -404,39 +404,39 @@ result
 NB. Gives the number of chars to take from the
 NB. argument to parse in the next deserialization call.
 length=: monad define
-type=. < take2 y
+type=. take2 y
 len=. _1
 NB. strings
-if. ({.>type) e.'ab' do. len=. 2*(dfh>type)-160
-elseif. type=<str8 do.
+if. ({.type) e.'ab' do. len=. 2*(dfh>type)-160
+elseif. type-:str8 do.
   len=. 2+2*dfh (2 3{y)
-elseif. type=<str16 do. len=. 4+2*dfh(2+i.4){y
-elseif. type=<str32 do. len=. 8+2*dfh(2+i.8){y
+elseif. type-:str16 do. len=. 4+2*dfh(2+i.4){y
+elseif. type-:str32 do. len=. 8+2*dfh(2+i.8){y
 NB. boolean
-elseif. type=<true do. len=. 0
-elseif. type=<false do. len=. 0
+elseif. type-:true do. len=. 0
+elseif. type-:false do. len=. 0
 NB. integers
-elseif. (dfh{.>type) < 8 do. len=. 0
-elseif. (0{>type)e.'ef' do. len=. 0
-elseif. type=<uint8 do. len=. 2
-elseif. type=<uint16 do. len=. 4
-elseif. type=<uint32 do. len=. 8
-elseif. type=<uint64 do. len=. 16
-elseif. type=<int8 do. len=. 2
-elseif. type=<int16 do. len=. 4
-elseif. type=<int32 do. len=. 8
-elseif. type=<int64 do. len=. 16
+elseif. (dfh{.type) < 8 do. len=. 0
+elseif. (0{type)e.'ef' do. len=. 0
+elseif. type-:uint8 do. len=. 2
+elseif. type-:uint16 do. len=. 4
+elseif. type-:uint32 do. len=. 8
+elseif. type-:uint64 do. len=. 16
+elseif. type-:int8 do. len=. 2
+elseif. type-:int16 do. len=. 4
+elseif. type-:int32 do. len=. 8
+elseif. type-:int64 do. len=. 16
 NB. floats
-elseif. type=<float32 do. len=. 8
-elseif. type=<float64 do. len=. 16
-elseif. (dfh{.>type)=9 do. len=. dfh 1{>type NB. second hex digit is length
+elseif. type-:float32 do. len=. 8
+elseif. type-:float64 do. len=. 16
+elseif. (dfh{.type)=9 do. len=. dfh 1{type NB. second hex digit is length
   len=. getLen (strip2 y);len
-elseif. type=<array16 do. len=. dfh 4{.strip2 y
+elseif. type-:array16 do. len=. dfh 4{.strip2 y
   len=. 4+getLen (strip2 y);len
-elseif. type=<array32 do. len=. dfh 8{.strip2 y
+elseif. type-:array32 do. len=. dfh 8{.strip2 y
   len=. 8+getLen (strip2 y);len
 NB. map
-elseif. 1 do. len=. dfh 1{>type
+elseif. 1 do. len=. dfh 1{type
   len=. getMapLen (strip2 y);len
 end.
 len+2 NB. add the prefix byte.
@@ -446,36 +446,36 @@ NB. Unpacks a byte string into J objects.
 NB. Any arrays will be unpacked into J boxed arrays
 NB.
 unpackObj=: monad define
-type=. < take2 y
+type=. take2 y
 len=. _1
 if. 0 = # y do.
-elseif.type=<true do. 1
-elseif.type=<false do. 0
+elseif.type-:true do. 1
+elseif.type-:false do. 0
 NB. strings
-elseif. ({. > type) e.'ab' do. unpackString y
-elseif. type e. str8;str16;str32 do. unpackString y
+elseif. ({. type) e.'ab' do. unpackString y
+elseif. (<type) e. str8;str16;str32 do. unpackString y
 NB. integers
-elseif. (dfh{.>type) < 8 do. unpackInteger y
-elseif. (0{>type) e.'ef' do. unpackInteger y
-elseif. type e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInteger y
+elseif. (dfh{.type) < 8 do. unpackInteger y
+elseif. (0{type) e.'ef' do. unpackInteger y
+elseif. (<type) e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInteger y
 NB. floats
-elseif. type e. float32;float64 do. unpackFloat y
+elseif. (<type) e. float32;float64 do. unpackFloat y
 NB. binary
-elseif. type e. bin8;bin16;bin32 do. unpackBin y
+elseif. (<type) e. bin8;bin16;bin32 do. unpackBin y
 NB. arrays
-elseif. (dfh{.>type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
+elseif. (dfh{.type) = 9 do. len=. dfh (1{type) NB. second hex digit is length
   readLen (strip2 y);len
-elseif. type = <array16 do. len=. (dfh 4{.strip2 y)
+elseif. type -: array16 do. len=. (dfh 4{.strip2 y)
   readLen (4}. strip2 y);len
-elseif. type = <array32 do. len=. (dfh 8{.strip2 y)
+elseif. type -: array32 do. len=. (dfh 8{.strip2 y)
   readLen  (8}.strip2 y);len
 NB. Maps
-elseif. (dfh 0{>type) = 8 do. NB. fixed map
-  len=. dfh (1{>type)
+elseif. (dfh 0{type) = 8 do. NB. fixed map
+  len=. dfh (1{type)
   readMapLen  (strip2 y);len
-elseif. type =< map16 do. len=. (dfh 4{.strip2 y)
+elseif. type -: map16 do. len=. (dfh 4{.strip2 y)
   readMapLen  (4}. strip2 y);len
-elseif. type =< map32 do. len=. (dfh 8{.strip2 y)
+elseif. type -: map32 do. len=. (dfh 8{.strip2 y)
   readMapLen  (8}.strip2 y);len
 elseif. 1 do.
   1
@@ -483,36 +483,36 @@ end.
 )
 
 unpackObjJSON=: monad define
-type=. < take2 y
+type=. take2 y
 len=. _1
 if. 0 = # y do.
-elseif.type=<true do. 1
-elseif.type=<false do. 0
+elseif.type-:true do. 1
+elseif.type-:false do. 0
 NB. strings
-elseif. ({. > type) e.'ab' do. unpackString y
-elseif. type e. str8;str16;str32 do. unpackString y
+elseif. ({.type) e.'ab' do. unpackString y
+elseif. (<type) e. str8;str16;str32 do. unpackString y
 NB. integers
-elseif. (dfh{.>type) < 8 do. unpackInteger y
-elseif. (0{>type) e.'ef' do. unpackInteger y
-elseif. type e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInteger y
+elseif. (dfh{.type) < 8 do. unpackInteger y
+elseif. (0{type) -: 'ef' do. unpackInteger y
+elseif. (<type) e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInteger y
 NB. floats
-elseif. type e. float32;float64 do. unpackFloat y
+elseif. (<type) e. float32;float64 do. unpackFloat y
 NB. binary
-elseif. type e. bin8;bin16;bin32 do. unpackBin y
+elseif. (<type) e. bin8;bin16;bin32 do. unpackBin y
 NB. arrays
-elseif. (dfh{.>type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
+elseif. (dfh{.type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
   readLenToJSON (strip2 y);len
-elseif. type = <array16 do. len=. (dfh 4{.strip2 y)
+elseif. type -: array16 do. len=. (dfh 4{.strip2 y)
   readLenToJSON (4}. strip2 y);len
-elseif. type = <array32 do. len=. (dfh 8{.strip2 y)
+elseif. type -: array32 do. len=. (dfh 8{.strip2 y)
   readLenToJSON (8}.strip2 y);len
 NB. Maps
-elseif. (dfh 0{>type) = 8 do. NB. fixed map
-  len=. dfh (1{>type)
+elseif. (dfh 0{type) = 8 do. NB. fixed map
+  len=. dfh (1{type)
   readMapLenToJSON (strip2 y);len
-elseif. type =< map16 do. len=. (dfh 4{.strip2 y)
+elseif. type -: map16 do. len=. (dfh 4{.strip2 y)
   readMapLenToJSON (4}. strip2 y);len
-elseif. type =< map32 do. len=. (dfh 8{.strip2 y)
+elseif. type -: map32 do. len=. (dfh 8{.strip2 y)
   readMapLenToJSON (8}.strip2 y);len
 elseif. 1 do.
   1
