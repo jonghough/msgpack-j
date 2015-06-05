@@ -558,7 +558,9 @@ reslt,']'
 )
 
 
-
+NB. Reads the Map datatype into a J implemented
+NB. Map object. Returns the symbolized object reference
+NB. of the map.
 readMapLen=: verb define
 hMap=. conew 'HashMap'
 create__hMap ''
@@ -625,6 +627,8 @@ end.
 totalLen
 )
 
+NB. Get the length of the map
+NB. i.e. number of bytes.
 getMapLen=: verb define
 data=. >0{y
 len=. 2* >1{y
