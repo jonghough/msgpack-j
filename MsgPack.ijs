@@ -446,37 +446,38 @@ NB. Unpacks a byte string into J objects.
 NB. Any arrays will be unpacked into J boxed arrays
 NB.
 unpackObj=: monad define
-type=. take2 y
+data =. tolower ' '-.~ y
+type=. take2 data
 len=. _1
-if. 0 = # y do.
+if. 0 = # data do.
 elseif.type-:true do. 1
 elseif.type-:false do. 0
 NB. strings
-elseif. ({. type) e.'ab' do. unpackString y
-elseif. (<type) e. str8;str16;str32 do. unpackString y
+elseif. ({. type) e.'ab' do. unpackString data
+elseif. (<type) e. str8;str16;str32 do. unpackString data
 NB. integers
-elseif. (dfh{.type) < 8 do. unpackInteger y
-elseif. (0{type) e.'ef' do. unpackInteger y
-elseif. (<type) e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInteger y
+elseif. (dfh{.type) < 8 do. unpackInteger data
+elseif. (0{type) e.'ef' do. unpackInteger data
+elseif. (<type) e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInteger data
 NB. floats
-elseif. (<type) e. float32;float64 do. unpackFloat y
+elseif. (<type) e. float32;float64 do. unpackFloat data
 NB. binary
-elseif. (<type) e. bin8;bin16;bin32 do. unpackBin y
+elseif. (<type) e. bin8;bin16;bin32 do. unpackBin data
 NB. arrays
 elseif. (dfh{.type) = 9 do. len=. dfh (1{type) NB. second hex digit is length
-  readLen (strip2 y);len
-elseif. type -: array16 do. len=. (dfh 4{.strip2 y)
-  readLen (4}. strip2 y);len
-elseif. type -: array32 do. len=. (dfh 8{.strip2 y)
-  readLen  (8}.strip2 y);len
+  readLen (strip2 data);len
+elseif. type -: array16 do. len=. (dfh 4{.strip2 data)
+  readLen (4}. strip2 data);len
+elseif. type -: array32 do. len=. (dfh 8{.strip2 data)
+  readLen  (8}.strip2 data);len
 NB. Maps
 elseif. (dfh 0{type) = 8 do. NB. fixed map
   len=. dfh (1{type)
-  readMapLen  (strip2 y);len
-elseif. type -: map16 do. len=. (dfh 4{.strip2 y)
+  readMapLen  (strip2 data);len
+elseif. type -: map16 do. len=. (dfh 4{.strip2 data)
   readMapLen  (4}. strip2 y);len
-elseif. type -: map32 do. len=. (dfh 8{.strip2 y)
-  readMapLen  (8}.strip2 y);len
+elseif. type -: map32 do. len=. (dfh 8{.strip2 data)
+  readMapLen  (8}.strip2 data);len
 elseif. 1 do.
   1
 end.
