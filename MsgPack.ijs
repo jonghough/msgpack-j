@@ -523,6 +523,7 @@ end.
 NB. takes the bytes to be read and the length to read.
 NB. returns the unpacked bytes and the remaining bytes to be read.
 read=: >@(1&{@]) (unpackObj@{.;}.) >@(0&{@])
+readToJSON=: >@(1&{@]) (unpackObjJSON@{.;}.) >@(0&{@])
 
 NB. read data and return the unpacked data
 NB. with the length of the bytes that were read.
@@ -548,7 +549,7 @@ len=. >1{y
 reslt=. '['
 while. len > 0 do.
   k=. length data
-  box=. read data;k
+  box=. readToJSON data;k
   if. len > 1 do.
     reslt=. reslt, (":>0{ box), ','
   else. reslt=. reslt, ":>0{ box end.
@@ -597,11 +598,11 @@ reslt=. '{'
 isKey=. 1 NB. key or value
 while. len > 0 do.
   k=. length data
-  box=. read data;k
+  box=. readToJSON data;k
   if. isKey do.
     reslt=. reslt, (":>0{ box ), ':'
   else. reslt=. reslt,(":>0{ box )
-    if. len > 1 do. reslt=. reslt,','end.
+    if. len > 1 do. reslt=. (,reslt),','end.
   end.
   data=. >1{box
   len=. len - 1
