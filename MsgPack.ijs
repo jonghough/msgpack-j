@@ -62,36 +62,13 @@ elseif. (# shape) > 1 do.
   ord=. 0&>.<:#shape
   result=. ' '-.~,"_ prefix, (packObj"ord ) y 
 elseif. len > 1 do. result=. ' '-.~,"_ packArray y
-elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packInteger y
+elseif. (<boxy) e. ( 'integer' ; 'boolean') do. result=. packInteger y
 elseif. boxy -: 'floating' do. result=. packFloat y
 end.
 result
 end.
 )
 
-
-packObjJSON=: monad define
-result=. ''
-dt=. GetType y
-if. dt -: 'HashMap' do.
-  packMapJSON y
-else.
-  boxy=. datatype y
-  len=. # y
-  shape=. $ y
-  if. isBoxed y do. result=. packBoxJSON y
-  elseif. boxy -: 'literal' do. result=. packStringJSON y
-  elseif. (# shape) > 1 do.
-    prefix=. hfd2 144 OR {. shape
-    ord=. 0&>.<:#shape
-    result=. '[',( insert/ (packObjJSON"ord ) y) , ']'
-  elseif. len > 1 do. result=. ' '-.~,"_ packArrayJSON y
-  elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packIntegerJSON y
-  elseif. boxy -: 'floating' do. result=. packFloatJSON y
-  end.
-  result
-end.
-)
 
 
 NB. =========================================================
@@ -133,8 +110,6 @@ elseif. 1 do.
 end.
 )
 
-packIntegerJSON=: ":`('-'&,@":@-)@.(0&>)
-
 
 NB. =========================================================
 NB. PACK FLOATS
@@ -145,8 +120,6 @@ if. (=<.) y do. packInteger y NB. if can be cast to integer then pack as an inte
 elseif. 1 do. float64, convertFloat y
 end.
 )
-
-packFloatJSON=: ('-'&,@":@-)`":@.(0&<)
 
 NB. =========================================================
 NB. PACK STRINGS
@@ -170,8 +143,6 @@ elseif. 1 do.
 end.
 )
 
-NB. pack strings to JSON
-packStringJSON=: ('"'&wrapWith)@:,@:":
 
 NB. =========================================================
 NB. PACK ARRAYS
@@ -187,16 +158,6 @@ elseif. len < 2^16 do.
 end.
 )
 
-packArrayJSON=: monad define
-len=. # y NB. pack the items
-res=. '['
-for_j. i. len do.
-  if. j = 0 do. res=. res,packObjJSON j{ y else.
-    res=. res,',',packObjJSON j{y
-  end.
-end.
-res,']'
-)
 
 NB. =========================================================
 NB. PACK BOX
@@ -216,20 +177,6 @@ else.
 end.
 )
 
-
-packBoxJSON=: monad define
-len=. # y
-if. len = 1 do. packObjJSON > y
-else.
-  res=. '['
-  for_j. i. len do.
-    if. j = 0 do. res=. res,packBoxJSON j{y
-    else. res=. res , ',', packBoxJSON j{ y
-    end.
-  end.
-  res,']'
-end.
-)
 
 NB. =========================================================
 NB. PACK BIN
@@ -269,35 +216,14 @@ prefix , a
 
 )
 
-packMapJSON=: monad define
-hMap=. 5 s: y NB. hashmap
-NB. following two lines are a workaround for what may be a bug
-NB. with J. Otherwise occassionally get rank error
-NB. with size__hMap ''
-str=. ,>hMap
-hMap=. <str
-size=. size__hMap ''
-prefix=. '{'
-res=. ''
-l=. enumerate__hMap ''
 
-NB. packUp will pack the key and the value of kvp pair and append them.
-for_j. i. size do.
-  open=. (>@:(0&{))@:,@:> j{ l
-  if. j = 0 do.
-    res=. res , (packObjJSON open), ':' , (,@:packObjJSON@:get__hMap open)
-  else.
-    res=. res , ',' , (packObjJSON open), ':' , (packObjJSON@:get__hMap open)
-  end.
-end.
-'{' , res, '}'
-)
 
 NB. Pack bytes
 NB. dyadic verb. x value 0 or 1. 0 = pack msgpack bytes, 1 = pack json string.
-NB.pack=: packObjJSON@:]`(a.&({~)@:dfh@:byteShape@:packObj@:])@.(0&=@:[)
 
 pack=: a.&({~)@:dfh@:byteShape@:packObj
+
+
 
 NB. =========================================================
 NB. UNPACKING
@@ -307,7 +233,6 @@ isInRange=: ((0&{ @ [) < ]) *. ((1&{ @ [) > ])
 
 NB. Unpack bytes
 NB. dyadic verb. x value 0 or 1. 0 = unpack msgpack bytes, 1 = unpack json string.
-NB.unpack=: unpackObjJSON@:,@:hfd@:(a.&i.)@:]`(unpackObj@:,@:hfd@:(a.&i.)@:])@.(0&=@:[)
 
 unpack=: unpackObj@:,@:hfd@:(a.&i.)
 
@@ -348,7 +273,7 @@ NB. Strip the front 2 chars from the front of the array
 strip2=: 2&}.
 NB. Reshapes the hexstring into a 4x2 array of hex strings,
 NB. representing bytes.
-byteShape=: 2&(,~)@:(2&(%~))@:# $ ]
+byteShape=: 2&(,~)@:-:@:# $ ]
 NB. Gets a J float from the hex string
 floatFromHex=: _2&(3!:5)@:|.@:(a.&({~))@:dfh@:byteShape
 
@@ -486,47 +411,11 @@ elseif. 1 do.
 end.
 )
 
-unpackObjJSON=: monad define
-type=. take2 y
-len=. _1
-if. 0 = # y do.
-elseif.type-:true do. 1
-elseif.type-:false do. 0
-NB. strings
-elseif. ({.type) e.'ab' do. unpackString y
-elseif. (<type) e. str8;str16;str32 do. unpackString y
-NB. integers
-elseif. (dfh{.type) < 8 do. unpackInteger y
-elseif. (0{type) -: 'ef' do. unpackInteger y
-elseif. (<type) e. uint8;uint16;uint32;uint64;int8;int16;int32;int64 do. unpackInteger y
-NB. floats
-elseif. (<type) e. float32;float64 do. unpackFloat y
-NB. binary
-elseif. (<type) e. bin8;bin16;bin32 do. unpackBin y
-NB. arrays
-elseif. (dfh{.type) = 9 do. len=. dfh (1{>type) NB. second hex digit is length
-  readLenToJSON (strip2 y);len
-elseif. type -: array16 do. len=. (dfh 4{.strip2 y)
-  readLenToJSON (4}. strip2 y);len
-elseif. type -: array32 do. len=. (dfh 8{.strip2 y)
-  readLenToJSON (8}.strip2 y);len
-NB. Maps
-elseif. (dfh 0{type) = 8 do. NB. fixed map
-  len=. dfh (1{type)
-  readMapLenToJSON (strip2 y);len
-elseif. type -: map16 do. len=. (dfh 4{.strip2 y)
-  readMapLenToJSON (4}. strip2 y);len
-elseif. type -: map32 do. len=. (dfh 8{.strip2 y)
-  readMapLenToJSON (8}.strip2 y);len
-elseif. 1 do.
-  1
-end.
-)
 
 NB. takes the bytes to be read and the length to read.
 NB. returns the unpacked bytes and the remaining bytes to be read.
 read=: >@(1&{@]) (unpackObj@{.;}.) >@(0&{@])
-readToJSON=: >@(1&{@]) (unpackObjJSON@{.;}.) >@(0&{@])
+
 
 NB. read data and return the unpacked data
 NB. with the length of the bytes that were read.
@@ -544,23 +433,6 @@ end.
 reslt
 )
 
-NB. Reads the given length of bytes from the data and returns JSON format representation
-NB. of the data.
-readLenToJSON=: verb define
-data=. >0{y
-len=. >1{y
-reslt=. '['
-while. len > 0 do.
-  k=. length data
-  box=. readToJSON data;k
-  if. len > 1 do.
-    reslt=. reslt, (":>0{ box), ','
-  else. reslt=. reslt, ":>0{ box end.
-  data=. >1{box
-  len=. len - 1
-end.
-reslt,']'
-)
 
 
 NB. Reads the Map datatype into a J implemented
@@ -592,27 +464,7 @@ end.
 s: hMap
 )
 
-NB. see: readMapLen.
-NB. Reads bytes and returns a JSON key value pair.
-readMapLenToJSON=: verb define
-data=. >0{y
-len=. 2 * >1{y NB. two objects , because map.
-reslt=. '{'
-isKey=. 1 NB. key or value
-while. len > 0 do.
-  k=. length data
-  box=. readToJSON data;k
-  if. isKey do.
-    reslt=. reslt, (":>0{ box ), ':'
-  else. reslt=. reslt,(":>0{ box )
-    if. len > 1 do. reslt=. (,reslt),','end.
-  end.
-  data=. >1{box
-  len=. len - 1
-  isKey=. 2 | (isKey + 1)
-end.
-reslt,'}'
-)
+
 
 NB. Gets the length in bytes of the
 NB. packed array.
@@ -632,22 +484,5 @@ end.
 totalLen
 )
 
-NB. Get the length of the map
-NB. i.e. number of bytes.
-getMapLen=: verb define
-data=. >0{y
-len=. 2* >1{y
-totalLen=. 0
-reslt=. ''
-while. len > 0 do.
-  k=. length data
-  totalLen=. totalLen + k
-  box=. read data;k
-  reslt=. reslt, 0{ box
-  data=. >1{box
-  len=. len - 1
-end.
-totalLen
-)
 
 
