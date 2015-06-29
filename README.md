@@ -87,7 +87,7 @@ Here HM is the HashMap reference name. It must be symbolized first, before packi
 
 The inner HashMap reference (HM2) must be symbolized before adding to the dictionary. If you are adding a list of HashMaps to the parent HashMap:
 
-<b>`set__HM 'key'; <(s:HM2;s:HM3;s:HM4)`
+<b>`set__HM 'key'; <(s:HM2;s:HM3;s:HM4)`</b>
 
 Note the HashMap array is boxed so that the argument for `set` is of length two. Since the HashMap `HM` stores the reference to the child HashMaps as symbols, they must be desymbolized if retrieved. e.g.
 
