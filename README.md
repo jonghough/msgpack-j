@@ -1,5 +1,5 @@
 # msgpack-j 
-Implementation of the Message Pack serialization format in J. Can serialize J types, arrays and HashMap J objects into MsgPack compatible types and back again.
+Implementation of the Message Pack serialization format in J.
 
 # Examples
 # strings
@@ -45,13 +45,14 @@ JSON representation:
 Example: 
 
 `unpackObj '81a46461746183a2696401a673636f72657394cb400999999999999acb4016cccccccccccdcb40091eb851eb851fcb4007333333333333a56f7468657283a4736f6d65d1f2b8a46d6f7265ccc8a4646174610c'`
- returns a dictionary containing inner dictionaries.
+ returns a nested dictionary.
 
 JSON representation:
 
 `{"data":{"id":1,"scores":[3.2,5.7,3.14,2.9],"other":{"some":_3400,"more":200,"data":12}}}`
 
 #Handling dictionary / hashmap datatypes
+
 Since J has no native Dictionary / Hashmap type, one has been implemented for the purposes of MsgPack serialization.
 
 Construction:
