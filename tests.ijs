@@ -1,5 +1,10 @@
-NB. Some tests for the MsgPack implementation
+NB. Some tests for the MsgPack implementation.
+NB. The correct results were taken from MsgPack.org
+NB. http://msgpack-json-editor.com and testing with Javascript
+NB. implementation of MsgPack.
+
 require '~user/projects/MsgPack/msgpack-j/MsgPack.ijs'
+require '~user/projects/MsgPack/msgpack-j//hashmap.ijs'
 
 NB. compare adverb.
 NB. 0{n is the argument, u is the verb to be tested,
@@ -17,7 +22,7 @@ packObj compare ( 65536; 'ce00010000')
 packObj compare ( _65536; 'd2ffff0000')
 packObj compare ( 3437655; 'ce00347457')
 packObj compare ( 20102300000; 'cf00000004ae30c160')
-packObj compare (4294967296;'cf0000000100000000')
+packObj compare ( 4294967296;'cf0000000100000000')
 packObj compare (_5; 'fb')
 packObj compare (_3434;'d1f296')
 packObj compare (_6544;'d1e670')
@@ -50,10 +55,7 @@ NB. STRINGS
 packObj compare ('!>#$&+*'; 'a7213e2324262b2a')
 packObj compare ('The quick brown fox...';'b654686520717569636b2062726f776e20666f782e2e2e')
 packObj compare ('notation as a tool of thought!'; 'be6e6f746174696f6e206173206120746f6f6c206f662074686f7567687421')
-NB. skip below test. It adds trailing elipsis. Needs fixing
-NB. packObj testAdverb ( 'Lorem ipsum dolor sit amet, omnis quaeque vituperatoribus has te, atqui congue expetendis eu pri, denique liberavisse cu mel. Eripuit minimum an sit, at graece semper atomorum nam, ei disputando eloquentiam definitiones sit. Oratio latine comprehensam an quo. Ei usu partem putent equidem, an labitur saperet vivendum mea.';'da01424c6f72656d20697073756d20646f6c6f722073697420616d65742c206f6d6e69732071756165717565207669747570657261746f7269627573206861732074652c20617471756920636f6e677565206578706574656e646973206575207072692c2064656e69717565206c69626572617669737365206375206d656c2e')
-
-
+packObj compare ('おはようございます'; 'bbe3818ae381afe38288e38186e38194e38196e38184e381bee38199')
 
 
 NB. DICTIONARIES. NOTE: testing packed bytes using other implementations may have

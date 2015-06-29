@@ -52,18 +52,18 @@ dt =. GetType y
 if. dt -: 'HashMap' do.
 packMap y
 else.
-boxy=. < datatype y
+boxy=. datatype y
 len=. # y
 shape=. $ y
 if. isBoxed y do. result=. packBox y
-elseif. boxy = < 'literal' do. result=. packString y
+elseif. boxy -: 'literal' do. result=. packString y
 elseif. (# shape) > 1 do.
   prefix=. hfd2 144 OR {. shape
   ord=. 0&>.<:#shape
   result=. ' '-.~,"_ prefix, (packObj"ord ) y 
 elseif. len > 1 do. result=. ' '-.~,"_ packArray y
 elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packInteger y
-elseif. boxy = < 'floating' do. result=. packFloat y
+elseif. boxy -: 'floating' do. result=. packFloat y
 end.
 result
 end.
@@ -76,18 +76,18 @@ dt=. GetType y
 if. dt -: 'HashMap' do.
   packMapJSON y
 else.
-  boxy=. < datatype y
+  boxy=. datatype y
   len=. # y
   shape=. $ y
   if. isBoxed y do. result=. packBoxJSON y
-  elseif. boxy = < 'literal' do. result=. packStringJSON y
+  elseif. boxy -: 'literal' do. result=. packStringJSON y
   elseif. (# shape) > 1 do.
     prefix=. hfd2 144 OR {. shape
     ord=. 0&>.<:#shape
     result=. '[',( insert/ (packObjJSON"ord ) y) , ']'
   elseif. len > 1 do. result=. ' '-.~,"_ packArrayJSON y
   elseif. boxy e. ( 'integer' ; 'boolean') do. result=. packIntegerJSON y
-  elseif. boxy = < 'floating' do. result=. packFloatJSON y
+  elseif. boxy -: 'floating' do. result=. packFloatJSON y
   end.
   result
 end.

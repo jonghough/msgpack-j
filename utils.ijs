@@ -9,7 +9,7 @@ listX=: list;"1 1 ('something',"_ 1 list)
 
 
 NB. inserts spaces in hexstring
-insertSpaces=: ,@:(' '&(,~"1))@:(,&2@:(-:@:#) $ ])
+insertSpaces=:  (] #~ 1 1j1 $~ #)
 
 NB. Gets the type (datatype)
 GetType =: 3 : 0
