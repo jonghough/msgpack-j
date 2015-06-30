@@ -17,7 +17,8 @@ Implementation of the Message Pack serialization format in J.
 <b>`packObj`</b> packs J types into a hex string (string literal). <b>`unpackObj`</b> reverses this.
 
 e.g.
-      `packObj 'Hello World'`
+
+       `packObj 'Hello World'`
 
          `ab48656c6c6f20576f726c64`
 
@@ -33,7 +34,7 @@ Example:
 
       `packObj 2;4.67;'hello, world'`</b>
 
-<b>`9302cb4012ae147ae147aeac68656c6c6f2c20776f726c64`</b>
+         `9302cb4012ae147ae147aeac68656c6c6f2c20776f726c64`
 
 JSON representation:
       `[2,4.67,"hello, world"]`
