@@ -24,7 +24,7 @@ e.g.
 
       `unpackObj 'ab48656c6c6f20576f726c64'`
 
-      `Hello World`
+         `Hello World`
 ###More Usage
 Example:
 
@@ -32,7 +32,7 @@ Example:
 
          `��@┐�┼z�G��hello, world`
 
-      `packObj 2;4.67;'hello, world'`</b>
+      `packObj 2;4.67;'hello, world'`
 
          `9302cb4012ae147ae147aeac68656c6c6f2c20776f726c64`
 
