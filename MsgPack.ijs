@@ -1,7 +1,7 @@
 NB. J implementation of MsgPack
 NB. @author Jon Hough
 NB.
-
+require '~user/projects/MsgPack/msgpack-j/hashmap.ijs'
 require '~user/projects/MsgPack/msgpack-j/utils.ijs'
 
 NB. BYTE PREFIXES - constants
