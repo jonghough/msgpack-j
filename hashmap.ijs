@@ -61,17 +61,6 @@ end.
 result
 )
 
-NB. UNUSED!
-apply=: monad define
-result=. ''
-for_j. i. MAX do.
-  ent=. j{entries
-  if. isSet__ent do.
-    result=. result,((y`:6) rawKey__ent), ((y`:6) value__ent)
-  end.
-end.
-result
-)
 
 NB. Append the new Entry to the hashmap.
 append=: dyad define
@@ -94,7 +83,7 @@ get=: monad define
 ky=. y
 hk=. hash ky
 ent=. hk{entries
-if. 0 = isSet__ent do. 'ERROR'
+if. 0 = isSet__ent do. 'ERROR' return.
 elseif. key__ent -: hk do.
   matches__ent ky
 end.
@@ -207,7 +196,7 @@ NB. else sends key to the next item in linkedlist.
 matches=: monad define
 rk=. y
 rk =. ($rawKey) $ rk
-if. isSet = 0 do. 'ERROR'
+if. isSet = 0 do. 'ERROR' return.
 elseif. (rawKey) -: (rk) do.
   value
 elseif. 1 do.
