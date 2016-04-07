@@ -3,7 +3,7 @@ NB. The correct results were taken from MsgPack.org
 NB. http://msgpack-json-editor.com and testing with Javascript
 NB. implementation of MsgPack.
 
-require '~user/projects/MsgPack/msgpack-j/MsgPack.ijs'
+require '~user/projects/MsgPack/msgpack-j/msgpack.ijs'
 require '~user/projects/MsgPack/msgpack-j//hashmap.ijs'
 
 NB. compare adverb.
