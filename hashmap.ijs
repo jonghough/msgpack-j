@@ -30,7 +30,7 @@ size=: monad define
 count=. 0
 for_j. i. MAX do.
   ent=. j{entries
-  if. isSet__ent do. count=. count + getSize__ent ''
+  if. isSet__ent do. count=. count + get_size__ent ''
   end.
 end.
 count
@@ -74,7 +74,7 @@ elseif. rawKey__ent -: rawKey__newent do.
   entries=: newent x} entries
 NB. else append to the last in linkedlist
 elseif. 1 do.
-  appendToLast__ent y
+  append_to_last__ent y
 end.
 )
 
@@ -114,14 +114,14 @@ NB. next element in bucket (becomes head of list).
 NB. raw keys do not match, check next element.
   else.
     nextent=. next__ent
-    ent removeFromList__nextent y
+    ent remove_from_list__nextent y
   end.
 end.
 )
 
 NB. Returns 1 if vey value pair exists for the
 NB. given key, otherwise returns 0.
-containsValue=: monad define
+contains_value=: monad define
 ky=. y
 hk=. hash ky
 ent=. hk{entries
@@ -146,7 +146,7 @@ destroy=: codestroy
 
 NB. Gets a hashmap reference from the value
 NB. returned from the get method.
-getHashmapFromValue =: (''&$)@:,@:(5&s:)@:>
+get_hashmap_from_value =: (''&$)@:,@:(5&s:)@:>
 
 NB. =============== ENTRY CLASS =============
 
@@ -205,7 +205,7 @@ end.
 )
 
 NB. Removes this item from the current linked list.
-removeFromList=: dyad define
+remove_from_list=: dyad define
 rk=. y NB. a raw key
 last=. x NB. the last entry in this list
 if. rk -: rawKey do.
@@ -213,21 +213,21 @@ if. rk -: rawKey do.
   reset ''
   1
 elseif. 0 = # next do. 0
-elseif. 1 do. next__last removeFromList__next y end.
+elseif. 1 do. next__last remove_from_list__next y end.
 )
 
 
-getSize=: monad define
+get_size=: monad define
 if. 0 = # next do. 1
-else. 1 + getSize__next ''
+else. 1 + get_size__next ''
 end.
 )
 
-appendToLast=: monad define
+append_to_last=: monad define
 if. 0 = # next do.
   next=: y
 else.
-  appendToLast__next y
+  append_to_last__next y
 end.
 )
 
