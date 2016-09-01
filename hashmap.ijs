@@ -6,7 +6,7 @@ NB. any ambiguity between object references and boxed literals.
 NB. This means that using symbols is not allowed for any values in the dictionary
 NB. other than HashMap object references.
 
-require '~user/projects/MsgPack/msgpack-j/utils.ijs'
+NB.require '~user/projects/msgpack-j/utils.ijs'
 
 NB. ============ HASHMAP CLASS ==============
 

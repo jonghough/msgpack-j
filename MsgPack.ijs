@@ -2,7 +2,6 @@ NB. J implementation of MsgPack
 NB. @author Jon Hough
 NB.
 
-require '~user/projects/MsgPack/msgpack-j/utils.ijs'
 
 NB. BYTE PREFIXES - constants
 (nil=: 'c0'),(reserved=: 'c1'),(false=: 'c2'),(true=: 'c3'),(bin8=: 'c4'),(bin16=: 'c5'),(bin32=: 'c6'),(ext8=: 'c7'),(ext16=: 'c8')

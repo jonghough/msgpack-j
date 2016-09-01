@@ -1,5 +1,5 @@
 NB. Some tests for the MsgPack implementation
-require '~user/projects/MsgPack/msgpack-j/MsgPack.ijs'
+NB. require '~user/projects/MsgPack/msgpack-j/MsgPack.ijs'
 
 NB. compare adverb.
 NB. 0{n is the argument, u is the verb to be tested,
