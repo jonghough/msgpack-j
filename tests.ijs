@@ -67,6 +67,15 @@ set__testQ 'Key2'; 'value2'
 set__testQ 'KEY3'; 'VALUE3'
 symTestQ =: s: testQ
 packObj compare (symTestQ ; '83a46b657931a676616c756531a44b455933a656414c554533a44b657932a676616c756532')
+NB. dictionary test 2
+hm =: '' conew 'HashMap'
+set__hm 'k2'; 50202
+set__hm 'k1'; 3
+set__hm 'k3'; i. 5
+packObj compare ((s: hm) ; '83a26b32cdc41aa26b3103a26b33950001020304') NB. json = {"k2":50202, "k1":3, "k3":[0,1,2,3,4]}
+
+
+
 NB. UNPACK tests
 unpackObj compare ('02';2)
 unpackObj compare ( 'ce00347457';3437655)

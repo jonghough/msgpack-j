@@ -28,6 +28,8 @@ NB. Calculates hex from decimal
 NB. and stretches the number of bytes to the
 NB. required amount, either padding 0's or F's
 hfd_stretch=: dyad define
+smoutput # y
+smoutput y
 targetLen=. x
 h=. hfd2 y
 result=. h
@@ -253,15 +255,15 @@ NB. packs map objects. (Map reference datatypes MUST be symbols
 NB. =========================================================
 packMap=: monad define
 hMap=. 5 s: y NB. hashmap
-NB. following two lines are a workaround for what may be a bug
-NB. with J. Otherwise occassionally get rank error
-NB. with size__hMap ''
+
 str=. ,>hMap
 hMap=. <str
 size=. size__hMap ''
 prefix=. '8', hfd size
 NB. packUp will pack the key and the value of kvp pair and append them.
-packUp=. (packObj, (packObj@:get__hMap@:":))@:(>@:(0&{))@:,@:>
+px=. ,@:packObj@:>
+packUp =. px"0@:>
+NB. (packObj, (packObj@:get__hMap@:":))@:(>@:(0&{))@:,@:>
 l=. enumerate__hMap ''
 a=. (' '-.~,(packUp"0) l)
 prefix , a
